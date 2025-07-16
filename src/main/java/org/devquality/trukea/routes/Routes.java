@@ -69,6 +69,16 @@ public class Routes {
         app.get("/api/historiales/{id}", histController::getById);
         app.get("/api/historiales/usuario/{uid}", histController::getByUsuario);
 
+        // Publicaciones
+        IPublicacionRepository pubRepo = new PublicacionRepositoryImpl(databaseConfig);
+        IPublicacionService pubService = new PublicacionServiceImpl(pubRepo);
+        PublicacionController pubController = new PublicacionController(pubService);
+        app.get("/api/publicaciones", pubController::getAll);
+        app.get("/api/publicaciones/{id}", pubController::getById);
+        app.get("/api/publicaciones/usuario/{uid}", pubController::getByUsuario);
+        app.post("/api/publicaciones", pubController::create);
+        app.delete("/api/publicaciones/{id}", pubController::delete);
+
     }
 
 }

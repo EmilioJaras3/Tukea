@@ -1,13 +1,13 @@
+// IHistorialTruequeService.java
 package org.devquality.trukea.services;
 
-import org.devquality.trukea.web.dtos.historiales.response.CreateHistorialTruequeResponse;
-import org.devquality.trukea.persistance.entities.HistorialTrueque;
-
+import org.devquality.trukea.web.dtos.historial.response.HistorialTruequeResponse;
 import java.util.ArrayList;
 
 public interface IHistorialTruequeService {
-    ArrayList<CreateHistorialTruequeResponse> findAll();
-    CreateHistorialTruequeResponse findById(Long id);
-    ArrayList<CreateHistorialTruequeResponse> findByUsuarioId(Long usuarioId);
-    CreateHistorialTruequeResponse create(HistorialTrueque historial);
+    ArrayList<HistorialTruequeResponse> findAll();
+    HistorialTruequeResponse findById(Long id);
+    ArrayList<HistorialTruequeResponse> findByUsuarioId(Long usuarioId);
+    void crearDesdeTrueque(Long truequeId, Long prodO, Long prodD,
+                           Long userO, Long userR);   // ← coincide con la impl
 }
