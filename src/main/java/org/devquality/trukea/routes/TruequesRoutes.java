@@ -4,7 +4,6 @@ import io.javalin.Javalin;
 import org.devquality.trukea.web.controllers.TruequeController;
 
 public class TruequesRoutes {
-
     private final TruequeController controller;
 
     public TruequesRoutes(TruequeController controller) {
@@ -12,21 +11,16 @@ public class TruequesRoutes {
     }
 
     public void configure(Javalin app) {
-        // GET endpoints
-        app.get("/api/trueques", controller::getAllTrueques);
-        app.get("/api/trueques/{id}", controller::getTruequeById);
-        app.get("/api/trueques/estado/{estado}", controller::getTruequesByEstado);
-        app.get("/api/trueques/producto-ofrecido/{productoId}", controller::getTruequesByProductoOfrecido);
-        app.get("/api/trueques/producto-deseado/{productoId}", controller::getTruequesByProductoDeseado);
-        app.get("/api/trueques/estado/{estado}/count", controller::countTruequesByEstado);
+        // CRUD básico
+        app.get("/api/trueques", controller::getAll);
+        app.get("/api/trueques/{id}", controller::getById);
+        app.post("/api/trueques", controller::create);
+        app.delete("/api/trueques/{id}", controller::delete);
 
-        // POST endpoint
-        app.post("/api/trueques", controller::createTrueque);
-
-        // PUT endpoint
-        app.put("/api/trueques/{id}", controller::updateTrueque);
-
-        // DELETE endpoint
-        app.delete("/api/trueques/{id}", controller::deleteTrueque);
+        // Endpoints específicos de trueque
+        app.get("/api/trueques/enviados/{usuarioId}", controller::getEnviados);
+        app.get("/api/trueques/recibidos/{usuarioId}", controller::getRecibidos);
+        app.put("/api/trueques/{id}/aceptar", controller::aceptar);
+        app.put("/api/trueques/{id}/rechazar", controller::rechazar);
     }
 }

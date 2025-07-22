@@ -3,9 +3,12 @@ package org.devquality.trukea.services.impl;
 import org.devquality.trukea.persistance.entities.Calificaciones;
 import org.devquality.trukea.persistance.repositories.ICalificacionesRepository;
 import org.devquality.trukea.services.ICalificacionesService;
-import org.devquality.trukea.web.dtos.calificaciones.response.CreateCalificacionesResponse;
+import org.devquality.trukea.web.dtos.calificaciones.request.CreateCalificacionRequest;
+import org.devquality.trukea.web.dtos.calificaciones.response.CalificacionResponse;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class CalificacionesServiceImpl implements ICalificacionesService {
 
@@ -15,46 +18,59 @@ public class CalificacionesServiceImpl implements ICalificacionesService {
         this.calificacionesRepository = calificacionesRepository;
     }
 
-    @Override
-    public ArrayList<CreateCalificacionesResponse> findAll() {
-        ArrayList<Calificaciones> calificaciones = calificacionesRepository.findAllCalificaciones();
-        ArrayList<CreateCalificacionesResponse> calificacionesResponses = new ArrayList<>();
-
-        for (Calificaciones calificacion : calificaciones) {
-            CreateCalificacionesResponse createCalificacionesResponse = new CreateCalificacionesResponse(
-                    calificacion.getId(),
-                    calificacion.getUsuarioCalificadorId(),
-                    calificacion.getUsuarioCalificadoId(),
-                    calificacion.getPuntuacion(),
-                    calificacion.getComentario(),
-                    calificacion.getFecha()
-            );
-            calificacionesResponses.add(createCalificacionesResponse);
-        }
-        return calificacionesResponses;
+    private CalificacionResponse mapToResponse(Calificaciones calificacion) {
+        return new CalificacionResponse(
+                calificacion.getId(),
+                calificacion.getUsuarioCalificadorId(),
+                calificacion.getUsuarioCalificadoId(),
+                calificacion.getPuntuacion(),
+                calificacion.getComentario(),
+                calificacion.getFecha()
+        );
     }
 
     @Override
-    public Calificaciones findById(Long id) {
-        return calificacionesRepository.findById(id);
+    public ArrayList<CalificacionResponse> findAll() {
+        return calificacionesRepository.findAll().stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
-    public ArrayList<CreateCalificacionesResponse> findByUsuarioCalificadoId(Long usuarioId) {
-        ArrayList<Calificaciones> calificaciones = calificacionesRepository.findByUsuarioCalificadoId(usuarioId);
-        ArrayList<CreateCalificacionesResponse> calificacionesResponses = new ArrayList<>();
+    public CalificacionResponse findById(Long id) {
+        Calificaciones calificacion = calificacionesRepository.findById(id);
+        return calificacion != null ? mapToResponse(calificacion) : null;
+    }
 
-        for (Calificaciones calificacion : calificaciones) {
-            CreateCalificacionesResponse createCalificacionesResponse = new CreateCalificacionesResponse(
-                    calificacion.getId(),
-                    calificacion.getUsuarioCalificadorId(),
-                    calificacion.getUsuarioCalificadoId(),
-                    calificacion.getPuntuacion(),
-                    calificacion.getComentario(),
-                    calificacion.getFecha()
-            );
-            calificacionesResponses.add(createCalificacionesResponse);
-        }
-        return calificacionesResponses;
+    @Override
+    public ArrayList<CalificacionResponse> findByUsuarioCalificado(Long usuarioId) {
+        return calificacionesRepository.findByUsuarioCalificado(usuarioId).stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    @Override
+    public ArrayList<CalificacionResponse> findByUsuarioCalificador(Long usuarioId) {
+        return calificacionesRepository.findByUsuarioCalificador(usuarioId).stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    @Override
+    public CalificacionResponse create(CreateCalificacionRequest request) {
+        Calificaciones calificacion = new Calificaciones();
+        calificacion.setUsuarioCalificadorId(request.getUsuarioCalificadorId());
+        calificacion.setUsuarioCalificadoId(request.getUsuarioCalificadoId());
+        calificacion.setPuntuacion(request.getPuntuacion());
+        calificacion.setComentario(request.getComentario());
+        calificacion.setFecha(LocalDateTime.now());
+
+        Calificaciones savedCalificacion = calificacionesRepository.save(calificacion);
+        return mapToResponse(savedCalificacion);
+    }
+
+    @Override
+    public boolean delete(Long id) {
+        return calificacionesRepository.delete(id);
     }
 }

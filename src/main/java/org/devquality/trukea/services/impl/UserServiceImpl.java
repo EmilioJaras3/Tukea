@@ -27,8 +27,13 @@ public class UserServiceImpl implements IUserServices {
 
             for (Usuario usuario : usuarios) {
                 CreateUsuarioResponse createUsuarioResponse = new CreateUsuarioResponse(
-                        usuario.getNombre(),
-                        usuario.getCorreo()
+                        usuario.getIdUsuario(),        // Integer
+                        usuario.getNombre(),           // String
+                        usuario.getApellidoPaterno(),  // String
+                        usuario.getApellidoMaterno(),  // String
+                        usuario.getFechaNacimiento(),  // LocalDate
+                        usuario.getCorreo(),           // String
+                        usuario.getIdCiudad()          // Integer
                 );
                 usuarioResponses.add(createUsuarioResponse);
             }
@@ -81,16 +86,25 @@ public class UserServiceImpl implements IUserServices {
             // Crear entidad Usuario
             Usuario usuario = new Usuario();
             usuario.setNombre(request.getNombre());
+            usuario.setApellidoPaterno(request.getApellidoPaterno());
+            usuario.setApellidoMaterno(request.getApellidoMaterno());
+            usuario.setFechaNacimiento(request.getFechaNacimiento());
             usuario.setCorreo(request.getCorreo());
-            usuario.setContrasenia(request.getContrasenia());
+            usuario.setContrasena(request.getClave());
+            usuario.setIdCiudad(request.getIdCiudad());
 
             // Guardar en base de datos
             Usuario usuarioCreado = usuarioRepository.createUser(usuario);
 
             // Retornar DTO de respuesta
             return new CreateUsuarioResponse(
-                    usuarioCreado.getNombre(),
-                    usuarioCreado.getCorreo()
+                    usuarioCreado.getIdUsuario(),        // Integer
+                    usuarioCreado.getNombre(),           // String
+                    usuarioCreado.getApellidoPaterno(),  // String
+                    usuarioCreado.getApellidoMaterno(),  // String
+                    usuarioCreado.getFechaNacimiento(),  // LocalDate
+                    usuarioCreado.getCorreo(),           // String
+                    usuarioCreado.getIdCiudad()          // Integer
             );
 
         } catch (IllegalArgumentException e) {
@@ -121,22 +135,31 @@ public class UserServiceImpl implements IUserServices {
 
             // Verificar que el email no esté en uso por otro usuario
             Usuario usuarioConEmail = usuarioRepository.findByEmail(request.getCorreo());
-            if (usuarioConEmail != null && !usuarioConEmail.getId().equals(id)) {
+            if (usuarioConEmail != null && !usuarioConEmail.getIdUsuario().equals(id.intValue())) {
                 throw new IllegalArgumentException("Ya existe otro usuario con ese email");
             }
 
             // Actualizar datos
             usuarioExistente.setNombre(request.getNombre());
+            usuarioExistente.setApellidoPaterno(request.getApellidoPaterno());
+            usuarioExistente.setApellidoMaterno(request.getApellidoMaterno());
+            usuarioExistente.setFechaNacimiento(request.getFechaNacimiento());
             usuarioExistente.setCorreo(request.getCorreo());
-            usuarioExistente.setContrasenia(request.getContrasenia());
+            usuarioExistente.setContrasena(request.getClave());
+            usuarioExistente.setIdCiudad(request.getIdCiudad());
 
             // Guardar cambios
             Usuario usuarioActualizado = usuarioRepository.updateUser(usuarioExistente);
 
             // Retornar DTO de respuesta
             return new CreateUsuarioResponse(
-                    usuarioActualizado.getNombre(),
-                    usuarioActualizado.getCorreo()
+                    usuarioActualizado.getIdUsuario(),        // Integer
+                    usuarioActualizado.getNombre(),           // String
+                    usuarioActualizado.getApellidoPaterno(),  // String
+                    usuarioActualizado.getApellidoMaterno(),  // String
+                    usuarioActualizado.getFechaNacimiento(),  // LocalDate
+                    usuarioActualizado.getCorreo(),           // String
+                    usuarioActualizado.getIdCiudad()          // Integer
             );
 
         } catch (IllegalArgumentException e) {

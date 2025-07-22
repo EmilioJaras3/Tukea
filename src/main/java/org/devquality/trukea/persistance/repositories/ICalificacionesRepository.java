@@ -6,9 +6,33 @@ import java.util.ArrayList;
 
 public interface ICalificacionesRepository {
 
-    ArrayList<Calificaciones> findAllCalificaciones();
+    /**
+     * Obtener todas las calificaciones.
+     */
+    ArrayList<Calificaciones> findAll();
 
+    /**
+     * Buscar calificación por ID.
+     */
     Calificaciones findById(Long id);
 
-    ArrayList<Calificaciones> findByUsuarioCalificadoId(Long usuarioId);
+    /**
+     * Obtener calificaciones que recibió un usuario.
+     */
+    ArrayList<Calificaciones> findByUsuarioCalificado(Long usuarioId);
+
+    /**
+     * Obtener calificaciones hechas por un usuario.
+     */
+    ArrayList<Calificaciones> findByUsuarioCalificador(Long usuarioId);
+
+    /**
+     * Guardar nueva calificación.
+     */
+    Calificaciones save(Calificaciones calificacion);
+
+    /**
+     * Eliminar calificación por ID.
+     */
+    boolean delete(Long id);
 }

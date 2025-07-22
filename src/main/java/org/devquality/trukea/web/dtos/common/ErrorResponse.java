@@ -5,19 +5,25 @@ import java.time.LocalDateTime;
 public class ErrorResponse {
     private String message;
     private LocalDateTime timestamp;
-    private int status;
+    private String error;
 
-    public ErrorResponse(String message, int status) {
-        this.message = message;
-        this.status = status;
+    public ErrorResponse() {
         this.timestamp = LocalDateTime.now();
     }
 
     public ErrorResponse(String message) {
         this.message = message;
         this.timestamp = LocalDateTime.now();
+        this.error = "Error";
     }
 
+    public ErrorResponse(String message, String error) {
+        this.message = message;
+        this.error = error;
+        this.timestamp = LocalDateTime.now();
+    }
+
+    // Getters y setters
     public String getMessage() {
         return message;
     }
@@ -34,11 +40,11 @@ public class ErrorResponse {
         this.timestamp = timestamp;
     }
 
-    public int getStatus() {
-        return status;
+    public String getError() {
+        return error;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setError(String error) {
+        this.error = error;
     }
 }

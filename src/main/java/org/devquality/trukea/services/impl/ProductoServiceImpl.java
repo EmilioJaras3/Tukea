@@ -27,11 +27,12 @@ public class ProductoServiceImpl implements IProductoService {
 
             for (Producto producto : productos) {
                 CreateProductoResponse createProductoResponse = new CreateProductoResponse(
-                        producto.getId(),
-                        producto.getNombre(),
-                        producto.getDescripcion(),
-                        producto.getCategoriaId(),
-                        producto.getUsuarioId()
+                        producto.getId().intValue(),              // Long → Integer
+                        producto.getNombre(),                     // String
+                        producto.getDescripcion(),                // String
+                        null,                                     // valorEstimado (no está en tu entidad)
+                        null,                                     // idCalidad (no está en tu entidad)
+                        producto.getCategoriaId().intValue()      // Long → Integer
                 );
                 productoResponses.add(createProductoResponse);
             }
@@ -67,11 +68,12 @@ public class ProductoServiceImpl implements IProductoService {
 
             for (Producto producto : productos) {
                 CreateProductoResponse createProductoResponse = new CreateProductoResponse(
-                        producto.getId(),
-                        producto.getNombre(),
-                        producto.getDescripcion(),
-                        producto.getCategoriaId(),
-                        producto.getUsuarioId()
+                        producto.getId().intValue(),              // Long → Integer
+                        producto.getNombre(),                     // String
+                        producto.getDescripcion(),                // String
+                        null,                                     // valorEstimado
+                        null,                                     // idCalidad
+                        producto.getCategoriaId().intValue()      // Long → Integer
                 );
                 productoResponses.add(createProductoResponse);
             }
@@ -94,11 +96,12 @@ public class ProductoServiceImpl implements IProductoService {
 
             for (Producto producto : productos) {
                 CreateProductoResponse createProductoResponse = new CreateProductoResponse(
-                        producto.getId(),
-                        producto.getNombre(),
-                        producto.getDescripcion(),
-                        producto.getCategoriaId(),
-                        producto.getUsuarioId()
+                        producto.getId().intValue(),              // Long → Integer
+                        producto.getNombre(),                     // String
+                        producto.getDescripcion(),                // String
+                        null,                                     // valorEstimado
+                        null,                                     // idCalidad
+                        producto.getCategoriaId().intValue()      // Long → Integer
                 );
                 productoResponses.add(createProductoResponse);
             }
@@ -119,21 +122,22 @@ public class ProductoServiceImpl implements IProductoService {
 
             // Crear entidad Producto
             Producto producto = new Producto();
-            producto.setNombre(request.getNombre());
-            producto.setDescripcion(request.getDescripcion());
-            producto.setCategoriaId(request.getCategoriaId());
-            producto.setUsuarioId(request.getUsuarioId());
+            producto.setNombre(request.getNombreProducto());
+            producto.setDescripcion(request.getDescripcionProducto());
+            producto.setCategoriaId(request.getIdCategoria().longValue());  // Integer → Long
+            // usuarioId se puede agregar después si es necesario
 
             // Guardar en base de datos
             Producto productoCreado = productoRepository.createProducto(producto);
 
             // Retornar DTO de respuesta
             return new CreateProductoResponse(
-                    productoCreado.getId(),
-                    productoCreado.getNombre(),
-                    productoCreado.getDescripcion(),
-                    productoCreado.getCategoriaId(),
-                    productoCreado.getUsuarioId()
+                    productoCreado.getId().intValue(),            // Long → Integer
+                    productoCreado.getNombre(),                   // String
+                    productoCreado.getDescripcion(),              // String
+                    request.getValorEstimado(),                   // Del request
+                    request.getIdCalidad(),                       // Del request
+                    productoCreado.getCategoriaId().intValue()    // Long → Integer
             );
 
         } catch (IllegalArgumentException e) {
@@ -163,21 +167,21 @@ public class ProductoServiceImpl implements IProductoService {
             }
 
             // Actualizar datos
-            productoExistente.setNombre(request.getNombre());
-            productoExistente.setDescripcion(request.getDescripcion());
-            productoExistente.setCategoriaId(request.getCategoriaId());
-            productoExistente.setUsuarioId(request.getUsuarioId());
+            productoExistente.setNombre(request.getNombreProducto());
+            productoExistente.setDescripcion(request.getDescripcionProducto());
+            productoExistente.setCategoriaId(request.getIdCategoria().longValue());
 
             // Guardar cambios
             Producto productoActualizado = productoRepository.updateProducto(productoExistente);
 
             // Retornar DTO de respuesta
             return new CreateProductoResponse(
-                    productoActualizado.getId(),
-                    productoActualizado.getNombre(),
-                    productoActualizado.getDescripcion(),
-                    productoActualizado.getCategoriaId(),
-                    productoActualizado.getUsuarioId()
+                    productoActualizado.getId().intValue(),       // Long → Integer
+                    productoActualizado.getNombre(),              // String
+                    productoActualizado.getDescripcion(),         // String
+                    request.getValorEstimado(),                   // Del request
+                    request.getIdCalidad(),                       // Del request
+                    productoActualizado.getCategoriaId().intValue() // Long → Integer
             );
 
         } catch (IllegalArgumentException e) {

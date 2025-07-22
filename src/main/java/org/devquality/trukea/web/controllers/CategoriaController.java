@@ -4,8 +4,8 @@ import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import org.devquality.trukea.persistance.entities.Categoria;
 import org.devquality.trukea.services.ICategoriaService;
-import org.devquality.trukea.web.dtos.categorias.request.CreateCategoriaRequest;
-import org.devquality.trukea.web.dtos.categorias.response.CreateCategoriaResponse;
+import org.devquality.trukea.web.dtos.categorias.requests.CreateCategoriaRequest;
+import org.devquality.trukea.web.dtos.categorias.responses.CreateCategoriaResponse;
 import org.devquality.trukea.web.dtos.common.ErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,7 @@ public class CategoriaController {
         try {
             CreateCategoriaRequest request = ctx.bodyAsClass(CreateCategoriaRequest.class);
 
-            if (request == null || request.getNombre() == null || request.getNombre().trim().isEmpty()) {
+            if (request == null || request.getCategoria() == null || request.getCategoria().trim().isEmpty()) {
                 ctx.status(HttpStatus.BAD_REQUEST)
                         .json(new ErrorResponse("El nombre de la categoría es requerido"));
                 return;

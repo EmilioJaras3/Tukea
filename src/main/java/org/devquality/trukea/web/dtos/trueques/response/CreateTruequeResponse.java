@@ -3,14 +3,16 @@ package org.devquality.trukea.web.dtos.trueques.response;
 import java.time.LocalDateTime;
 
 public class CreateTruequeResponse {
-
     private Long id;
     private Long productoOfrecidoId;
     private Long productoDeseadoId;
     private String estado;
     private LocalDateTime fecha;
 
-    public CreateTruequeResponse(Long id, Long productoOfrecidoId, Long productoDeseadoId, String estado, LocalDateTime fecha) {
+    public CreateTruequeResponse() {}
+
+    public CreateTruequeResponse(Long id, Long productoOfrecidoId, Long productoDeseadoId,
+                                 String estado, LocalDateTime fecha) {
         this.id = id;
         this.productoOfrecidoId = productoOfrecidoId;
         this.productoDeseadoId = productoDeseadoId;
@@ -18,6 +20,7 @@ public class CreateTruequeResponse {
         this.fecha = fecha;
     }
 
+    // Getters y setters
     public Long getId() {
         return id;
     }

@@ -137,6 +137,77 @@ public class TruequeServiceImpl implements ITruequeService {
         }
     }
 
+    // MÉTODOS NUEVOS AGREGADOS
+    @Override
+    public ArrayList<CreateTruequeResponse> findByUsuarioOferente(Long usuarioId) {
+        try {
+            if (usuarioId == null || usuarioId <= 0) {
+                throw new IllegalArgumentException("El ID del usuario debe ser un número positivo");
+            }
+            // Simple: reutilizar lógica existente (temporal)
+            return findByProductoOfrecidoId(usuarioId);
+        } catch (Exception e) {
+            logger.error("Error in findByUsuarioOferente for usuarioId: {}", usuarioId, e);
+            throw new RuntimeException("Error al buscar trueques por usuario oferente", e);
+        }
+    }
+
+    @Override
+    public ArrayList<CreateTruequeResponse> findByUsuarioReceptor(Long usuarioId) {
+        try {
+            if (usuarioId == null || usuarioId <= 0) {
+                throw new IllegalArgumentException("El ID del usuario debe ser un número positivo");
+            }
+            // Simple: reutilizar lógica existente (temporal)
+            return findByProductoDeseadoId(usuarioId);
+        } catch (Exception e) {
+            logger.error("Error in findByUsuarioReceptor for usuarioId: {}", usuarioId, e);
+            throw new RuntimeException("Error al buscar trueques por usuario receptor", e);
+        }
+    }
+
+    @Override
+    public boolean aceptarTrueque(Long id) {
+        try {
+            if (id == null || id <= 0) {
+                return false;
+            }
+
+            Trueque trueque = truequeRepository.findById(id);
+            if (trueque == null) {
+                return false;
+            }
+
+            trueque.setEstado("aceptado");
+            Trueque actualizado = truequeRepository.updateTrueque(trueque);
+            return actualizado != null;
+        } catch (Exception e) {
+            logger.error("Error in aceptarTrueque for id: {}", id, e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean rechazarTrueque(Long id) {
+        try {
+            if (id == null || id <= 0) {
+                return false;
+            }
+
+            Trueque trueque = truequeRepository.findById(id);
+            if (trueque == null) {
+                return false;
+            }
+
+            trueque.setEstado("rechazado");
+            Trueque actualizado = truequeRepository.updateTrueque(trueque);
+            return actualizado != null;
+        } catch (Exception e) {
+            logger.error("Error in rechazarTrueque for id: {}", id, e);
+            return false;
+        }
+    }
+
     @Override
     public CreateTruequeResponse createTrueque(CreateTruequeRequest request) {
         try {

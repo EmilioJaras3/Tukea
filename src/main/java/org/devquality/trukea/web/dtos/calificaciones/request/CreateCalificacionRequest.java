@@ -1,33 +1,29 @@
-package org.devquality.trukea.web.dtos.calificaciones.response;
+package org.devquality.trukea.web.dtos.calificaciones.request;
 
-import java.time.LocalDateTime;
-
-public class CreateCalificacionesResponse {
-
-    private Long id;
+public class CreateCalificacionRequest {
     private Long usuarioCalificadorId;
     private Long usuarioCalificadoId;
     private Integer puntuacion;
     private String comentario;
-    private LocalDateTime fecha;
 
-    public CreateCalificacionesResponse(Long id, Long usuarioCalificadorId, Long usuarioCalificadoId, Integer puntuacion, String comentario, LocalDateTime fecha) {
-        this.id = id;
+    public CreateCalificacionRequest() {}
+
+    public CreateCalificacionRequest(Long usuarioCalificadorId, Long usuarioCalificadoId,
+                                     Integer puntuacion, String comentario) {
         this.usuarioCalificadorId = usuarioCalificadorId;
         this.usuarioCalificadoId = usuarioCalificadoId;
         this.puntuacion = puntuacion;
         this.comentario = comentario;
-        this.fecha = fecha;
     }
 
-    public Long getId() {
-        return id;
+    public boolean isValid() {
+        return usuarioCalificadorId != null && usuarioCalificadorId > 0 &&
+                usuarioCalificadoId != null && usuarioCalificadoId > 0 &&
+                puntuacion != null && puntuacion >= 1 && puntuacion <= 5 &&
+                !usuarioCalificadorId.equals(usuarioCalificadoId);
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    // Getters y setters
     public Long getUsuarioCalificadorId() {
         return usuarioCalificadorId;
     }
@@ -58,13 +54,5 @@ public class CreateCalificacionesResponse {
 
     public void setComentario(String comentario) {
         this.comentario = comentario;
-    }
-
-    public LocalDateTime getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(LocalDateTime fecha) {
-        this.fecha = fecha;
     }
 }

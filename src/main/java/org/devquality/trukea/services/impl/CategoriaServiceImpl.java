@@ -3,8 +3,8 @@ package org.devquality.trukea.services.impl;
 import org.devquality.trukea.persistance.entities.Categoria;
 import org.devquality.trukea.persistance.repositories.ICategoriaRepository;
 import org.devquality.trukea.services.ICategoriaService;
-import org.devquality.trukea.web.dtos.categorias.request.CreateCategoriaRequest;
-import org.devquality.trukea.web.dtos.categorias.response.CreateCategoriaResponse;
+import org.devquality.trukea.web.dtos.categorias.requests.CreateCategoriaRequest;
+import org.devquality.trukea.web.dtos.categorias.responses.CreateCategoriaResponse;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -21,22 +21,31 @@ public class CategoriaServiceImpl implements ICategoriaService {
     public ArrayList<CreateCategoriaResponse> findAll() {
         ArrayList<Categoria> categorias = categoriaRepository.findAll();
         return categorias.stream()
-                .map(cat -> new CreateCategoriaResponse(cat.getId(), cat.getNombre()))
+                .map(c -> new CreateCategoriaResponse(
+                        c.getId().intValue(),    // Long → Integer
+                        c.getNombre(),           // String
+                        null                     // descripcionCategoria (tu entidad no lo tiene)
+                ))
                 .collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    @Override
-    public Categoria findById(Long id) {
-        return categoriaRepository.findById(id);
     }
 
     @Override
     public CreateCategoriaResponse createCategoria(CreateCategoriaRequest request) {
         Categoria categoria = new Categoria();
-        categoria.setNombre(request.getNombre());
+        categoria.setNombre(request.getCategoria());
+        // Tu entidad no tiene descripcionCategoria, así que solo usamos nombre
 
-        Categoria guardada = categoriaRepository.save(categoria);
+        Categoria nueva = categoriaRepository.save(categoria);
 
-        return new CreateCategoriaResponse(guardada.getId(), guardada.getNombre());
+        return new CreateCategoriaResponse(
+                nueva.getId().intValue(),    // Long → Integer
+                nueva.getNombre(),           // String
+                request.getDescripcionCategoria()  // Del request, ya que la entidad no lo guarda
+        );
+    }
+
+    @Override
+    public Categoria findById(Long id) {
+        return categoriaRepository.findById(id);
     }
 }
