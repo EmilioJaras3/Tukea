@@ -115,8 +115,7 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
             }
 
             preparedStatement.setString(5, usuario.getCorreo());
-            preparedStatement.setString(6, usuario.getClave());
-
+            preparedStatement.setString(6, usuario.getclave());
             if (usuario.getIdCiudad() != null) {
                 preparedStatement.setInt(7, usuario.getIdCiudad());
             } else {
@@ -158,7 +157,7 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
             }
 
             preparedStatement.setString(5, usuario.getCorreo());
-            preparedStatement.setString(6, usuario.getClave());
+            preparedStatement.setString(6, usuario.getclave());
 
             if (usuario.getIdCiudad() != null) {
                 preparedStatement.setInt(7, usuario.getIdCiudad());
@@ -180,6 +179,8 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
             throw new RuntimeException("Error al actualizar usuario", e);
         }
     }
+
+    //HOLA ESTA ES UNA PRUEBA PARA HACER UN PUSH
 
     @Override
     public boolean deleteUser(Long id) {

@@ -3,6 +3,7 @@ package org.devquality.trukea.routes;
 import io.javalin.Javalin;
 import org.devquality.trukea.config.DatabaseConfig;
 import org.devquality.trukea.persistance.repositories.impl.*;
+//import org.devquality.trukea.services.IEstadisticasService;
 import org.devquality.trukea.services.impl.*;
 import org.devquality.trukea.web.controllers.*;
 
@@ -59,7 +60,7 @@ public class Routes {
     }
 
     // MÉTODO PARA CONFIGURAR SOLO LAS RUTAS QUE FUNCIONAN
-    public static void configureFunctionalRoutes(
+    public void configureFunctionalRoutes(
             Javalin app,
             UsuarioController usuarioController,
             ProductoController productoController,
@@ -137,5 +138,12 @@ public class Routes {
             ctx.json("Endpoints disponibles: /api/usuarios, /api/productos, /api/categorias, " +
                     "/api/calificaciones, /api/trueques, /api/publicaciones, /api/calidad, /api/health");
         });
+        //EstadisticasRepositoryImpl estadisticasRepository = new EstadisticasRepositoryImpl(this.databaseConfig);
+        //EstadisticasServiceImpl estadisticasService = new EstadisticasServiceImpl(estadisticasRepository);
+        //EstadisticasController estadisticasController = new EstadisticasController((IEstadisticasService) estadisticasService);
+
+
+        //app.get("/api/usuarios/{id}/estadisticas", estadisticasController::getEstadisticasUsuario);
+
     }
 }
