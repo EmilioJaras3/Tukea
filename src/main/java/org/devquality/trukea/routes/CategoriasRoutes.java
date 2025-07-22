@@ -17,3 +17,4 @@ public class CategoriasRoutes {
         app.post("/api/categorias", controller::createCategoria);  // <-- Aquí el método para POST
     }
 }
+

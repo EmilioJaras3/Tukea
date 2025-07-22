@@ -1,5 +1,6 @@
 package org.devquality.trukea.services;
 
+import org.devquality.trukea.persistance.entities.Usuario;
 import org.devquality.trukea.web.dtos.usuarios.request.CreateUsuarioRequest;
 import org.devquality.trukea.web.dtos.usuarios.response.CreateUsuarioResponse;
 
@@ -10,6 +11,12 @@ public interface IUserServices {
     // ============================================
     // READ OPERATIONS
     // ============================================
+
+    ArrayList<CreateUsuarioResponse> findAll();
+
+    Usuario findByEmail(String email);
+
+    Usuario findById(Long id);
 
     /**
      * Obtiene todos los usuarios del sistema

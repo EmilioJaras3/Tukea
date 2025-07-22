@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
-public class UserServiceImpl implements IUserServices {
+public  class UserServiceImpl implements IUserServices {
 
     private final IUsuarioRepository usuarioRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
@@ -72,6 +72,21 @@ public class UserServiceImpl implements IUserServices {
     }
 
     @Override
+    public ArrayList<CreateUsuarioResponse> getAllUsers() {
+        return null;
+    }
+
+    @Override
+    public CreateUsuarioResponse getUserByEmail(String email) {
+        return null;
+    }
+
+    @Override
+    public CreateUsuarioResponse getUserById(Long id) {
+        return null;
+    }
+
+    @Override
     public CreateUsuarioResponse createUser(CreateUsuarioRequest request) {
         try {
             // Validar request
@@ -91,7 +106,7 @@ public class UserServiceImpl implements IUserServices {
             usuario.setApellidoMaterno(request.getApellidoMaterno());
             usuario.setFechaNacimiento(request.getFechaNacimiento());
             usuario.setCorreo(request.getCorreo());
-            usuario.setContrasena(request.getClave());
+            usuario.setclave(request.getClave());
             usuario.setIdCiudad(request.getIdCiudad());
 
             // Guardar en base de datos
@@ -146,7 +161,7 @@ public class UserServiceImpl implements IUserServices {
             usuarioExistente.setApellidoMaterno(request.getApellidoMaterno());
             usuarioExistente.setFechaNacimiento(request.getFechaNacimiento());
             usuarioExistente.setCorreo(request.getCorreo());
-            usuarioExistente.setContrasena(request.getClave());
+            usuarioExistente.setclave(request.getClave());
             usuarioExistente.setIdCiudad(request.getIdCiudad());
 
             // Guardar cambios
@@ -221,5 +236,15 @@ public class UserServiceImpl implements IUserServices {
             logger.error("Error in existsById service for id: {}", id, e);
             throw new RuntimeException("Error al verificar existencia de usuario por ID", e);
         }
+    }
+
+    @Override
+    public boolean isValidUserData(CreateUsuarioRequest request) {
+        return false;
+    }
+
+    @Override
+    public int countAllUsers() {
+        return 0;
     }
 }

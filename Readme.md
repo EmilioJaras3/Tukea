@@ -38,4 +38,4 @@ curl http://localhost:8082/api/productos/categoria/1
 
 # Obtener trueques pendientes
 curl http://localhost:8082/api/trueques/estado/pendiente
-```
+```"# API Trukeaneo" 

@@ -86,7 +86,7 @@ public class Usuario {
     }
 
     // Método alternativo para compatibilidad
-    public String getContrasena() {
+    public String getClave() {
         return clave;
     }
 
