@@ -1,3 +1,4 @@
+
 package org.devquality.trukea.services.impl;
 
 import org.devquality.trukea.persistance.entities.Usuario;

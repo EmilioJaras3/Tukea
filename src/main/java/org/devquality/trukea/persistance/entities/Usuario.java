@@ -10,16 +10,17 @@ public class Usuario {
     private String apellidoMaterno;
     private LocalDate fechaNacimiento;
     private String correo;
-    private String contrasenia;
+    private String clave;
     private Integer idCiudad;
 
-    public Usuario() {}
+    public Usuario() {
+    }
 
-    public Usuario(Long id, String nombre, String correo, String contrasenia) {
+    public Usuario(Long id, String nombre, String correo, String clave) {
         this.id = id;
         this.nombre = nombre;
         this.correo = correo;
-        this.contrasenia = contrasenia;
+        this.clave = clave;
     }
 
     // TODOS los getters y setters
@@ -76,21 +77,21 @@ public class Usuario {
         this.correo = correo;
     }
 
-    public String getContrasenia() {
-        return contrasenia;
+    public String getclave() {
+        return clave;
     }
 
-    public void setContrasenia(String contrasenia) {
-        this.contrasenia = contrasenia;
+    public void setclave(String clave) {
+        this.clave = clave;
     }
 
     // Método alternativo para compatibilidad
     public String getContrasena() {
-        return contrasenia;
+        return clave;
     }
 
-    public void setContrasena(String contrasena) {
-        this.contrasenia = contrasena;
+    public void setClave(String Clave) {
+        this.clave = Clave;
     }
 
     public Integer getIdCiudad() {
@@ -99,5 +100,11 @@ public class Usuario {
 
     public void setIdCiudad(Integer idCiudad) {
         this.idCiudad = idCiudad;
+    }
+
+
+    public String getClave(String Clave) {
+        this.clave = Clave;
+        return Clave;
     }
 }

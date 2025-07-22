@@ -13,21 +13,21 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
 
     private final DatabaseConfig databaseConfig;
 
-    // SELECT queries
-    private static final String SELECT_USER = "SELECT id,nombre,correo,contraseña from usuarios ";
-    private static final String SELECT_USER_BY_EMAIL = "SELECT id,nombre,correo,contraseña from usuarios WHERE correo = ?";
-    private static final String SELECT_USER_BY_ID = "SELECT id,nombre,correo,contraseña from usuarios WHERE id = ?";
+    // ✅ SELECT queries CORRECTAS para tu BD
+    private static final String SELECT_USER = "SELECT id,nombre,apellidoPaterno,apellidoMaterno,fechaNacimiento,correo,clave,idCiudad from usuarios ";
+    private static final String SELECT_USER_BY_EMAIL = "SELECT id,nombre,apellidoPaterno,apellidoMaterno,fechaNacimiento,correo,clave,idCiudad from usuarios WHERE correo = ?";
+    private static final String SELECT_USER_BY_ID = "SELECT id,nombre,apellidoPaterno,apellidoMaterno,fechaNacimiento,correo,clave,idCiudad from usuarios WHERE id = ?";
 
-    // INSERT queries
-    private static final String INSERT_USER = "INSERT INTO usuarios (nombre, correo, contraseña) VALUES (?, ?, ?)";
+    // ✅ INSERT query CORRECTA (7 campos)
+    private static final String INSERT_USER = "INSERT INTO usuarios (nombre, apellidoPaterno, apellidoMaterno, fechaNacimiento, correo, clave, idCiudad) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-    // UPDATE queries
-    private static final String UPDATE_USER = "UPDATE usuarios SET nombre = ?, correo = ?, contraseña = ? WHERE id = ?";
+    // ✅ UPDATE query CORRECTA
+    private static final String UPDATE_USER = "UPDATE usuarios SET nombre = ?, apellidoPaterno = ?, apellidoMaterno = ?, fechaNacimiento = ?, correo = ?, clave = ?, idCiudad = ? WHERE id = ?";
 
-    // DELETE queries
+    // ✅ DELETE query CORRECTA
     private static final String DELETE_USER = "DELETE FROM usuarios WHERE id = ?";
 
-    // EXISTS queries
+    // ✅ EXISTS queries CORRECTAS
     private static final String EXISTS_BY_EMAIL = "SELECT COUNT(*) FROM usuarios WHERE correo = ?";
     private static final String EXISTS_BY_ID = "SELECT COUNT(*) FROM usuarios WHERE id = ?";
 
@@ -98,10 +98,17 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
     @Override
     public Usuario createUser(Usuario usuario) {
         try (Connection connection = databaseConfig.getConnection()) {
+            logger.debug("Creating user: {}", usuario.getCorreo());
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS);
+
+            // ✅ 7 parámetros para INSERT
             preparedStatement.setString(1, usuario.getNombre());
-            preparedStatement.setString(2, usuario.getCorreo());
-            preparedStatement.setString(3, usuario.getContrasenia());
+            preparedStatement.setString(2, usuario.getApellidoPaterno());
+            preparedStatement.setString(3, usuario.getApellidoMaterno());
+            preparedStatement.setDate(4, usuario.getFechaNacimiento() != null ? Date.valueOf(usuario.getFechaNacimiento()) : null);
+            preparedStatement.setString(5, usuario.getCorreo());
+            preparedStatement.setString(6, usuario.getclave());
+            preparedStatement.setObject(7, usuario.getIdCiudad());
 
             int affectedRows = preparedStatement.executeUpdate();
 
@@ -129,10 +136,16 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
     public Usuario updateUser(Usuario usuario) {
         try (Connection connection = databaseConfig.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER);
+
+            // ✅ 8 parámetros para UPDATE
             preparedStatement.setString(1, usuario.getNombre());
-            preparedStatement.setString(2, usuario.getCorreo());
-            preparedStatement.setString(3, usuario.getContrasenia());
-            preparedStatement.setLong(4, usuario.getId());
+            preparedStatement.setString(2, usuario.getApellidoPaterno());
+            preparedStatement.setString(3, usuario.getApellidoMaterno());
+            preparedStatement.setDate(4, usuario.getFechaNacimiento() != null ? Date.valueOf(usuario.getFechaNacimiento()) : null);
+            preparedStatement.setString(5, usuario.getCorreo());
+            preparedStatement.setString(6, usuario.getclave());
+            preparedStatement.setObject(7, usuario.getIdCiudad());
+            preparedStatement.setLong(8, usuario.getId());
 
             int affectedRows = preparedStatement.executeUpdate();
 
@@ -210,12 +223,23 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
         return false;
     }
 
+    // ✅ MAPEO CORRECTO para todos los campos de tu BD
     private Usuario mapResultSetToUsuario(ResultSet resultSet) throws SQLException {
         Usuario usuario = new Usuario();
         usuario.setId(resultSet.getLong("id"));
         usuario.setNombre(resultSet.getString("nombre"));
+        usuario.setApellidoPaterno(resultSet.getString("apellidoPaterno"));
+        usuario.setApellidoMaterno(resultSet.getString("apellidoMaterno"));
+
+        Date fechaNacimiento = resultSet.getDate("fechaNacimiento");
+        usuario.setFechaNacimiento(fechaNacimiento != null ? fechaNacimiento.toLocalDate() : null);
+
         usuario.setCorreo(resultSet.getString("correo"));
-        usuario.setContrasenia(resultSet.getString("contraseña"));
+        usuario.setclave(resultSet.getString("clave"));
+
+        Object idCiudad = resultSet.getObject("idCiudad");
+        usuario.setIdCiudad(idCiudad != null ? ((Number) idCiudad).intValue() : null);
+
         return usuario;
     }
 }
