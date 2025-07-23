@@ -14,33 +14,24 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
     private final DatabaseConfig databaseConfig;
     private static final Logger logger = LoggerFactory.getLogger(UsuarioRepositoryImpl.class);
 
-    // ✅ CONSULTAS CORREGIDAS PARA TU BD
+    // CONSULTAS CORREGIDAS PARA TU BD
     private static final String SELECT_USER_COMPLETE = """
-        SELECT u.id_usuario, u.nombre, u.apellido_paterno, u.apellido_materno,
-               u.fecha_nacimiento, u.correo, u.clave, u.id_ciudad,
-               c.nombre as ciudad_nombre
-        FROM usuarios u
-        LEFT JOIN ciudades c ON u.id_ciudad = c.id_ciudad
+        SELECT id, nombre, correo, contraseña, ciudad, edad, foto_perfil, descripcion
+        FROM usuarios
         """;
-
-    private static final String SELECT_USER_BY_ID = SELECT_USER_COMPLETE + " WHERE u.id_usuario = ?";
-    private static final String SELECT_USER_BY_EMAIL = SELECT_USER_COMPLETE + " WHERE u.correo = ?";
-
+    private static final String SELECT_USER_BY_ID = SELECT_USER_COMPLETE + " WHERE id = ?";
+    private static final String SELECT_USER_BY_EMAIL = SELECT_USER_COMPLETE + " WHERE correo = ?";
     private static final String INSERT_USER = """
-        INSERT INTO usuarios (nombre, apellido_paterno, apellido_materno, 
-                            fecha_nacimiento, correo, clave, id_ciudad) 
+        INSERT INTO usuarios (nombre, correo, contraseña, ciudad, edad, foto_perfil, descripcion)
         VALUES (?, ?, ?, ?, ?, ?, ?)
         """;
-
     private static final String UPDATE_USER = """
-        UPDATE usuarios SET nombre = ?, apellido_paterno = ?, apellido_materno = ?, 
-                          fecha_nacimiento = ?, correo = ?, clave = ?, id_ciudad = ? 
-        WHERE id_usuario = ?
+        UPDATE usuarios SET nombre = ?, correo = ?, contraseña = ?, ciudad = ?, edad = ?, foto_perfil = ?, descripcion = ?
+        WHERE id = ?
         """;
-
-    private static final String DELETE_USER = "DELETE FROM usuarios WHERE id_usuario = ?";
+    private static final String DELETE_USER = "DELETE FROM usuarios WHERE id = ?";
     private static final String EXISTS_BY_EMAIL = "SELECT COUNT(*) FROM usuarios WHERE correo = ?";
-    private static final String EXISTS_BY_ID = "SELECT COUNT(*) FROM usuarios WHERE id_usuario = ?";
+    private static final String EXISTS_BY_ID = "SELECT COUNT(*) FROM usuarios WHERE id = ?";
 
     public UsuarioRepositoryImpl(DatabaseConfig databaseConfig) {
         this.databaseConfig = databaseConfig;
@@ -106,22 +97,16 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setString(1, usuario.getNombre());
-            preparedStatement.setString(2, usuario.getApellidoPaterno());
-            preparedStatement.setString(3, usuario.getApellidoMaterno());
-
-            if (usuario.getFechaNacimiento() != null) {
-                preparedStatement.setDate(4, Date.valueOf(usuario.getFechaNacimiento()));
+            preparedStatement.setString(2, usuario.getCorreo());
+            preparedStatement.setString(3, usuario.getContraseña());
+            preparedStatement.setString(4, usuario.getCiudad());
+            if (usuario.getEdad() != null) {
+                preparedStatement.setInt(5, usuario.getEdad());
             } else {
-                preparedStatement.setNull(4, Types.DATE);
+                preparedStatement.setNull(5, java.sql.Types.INTEGER);
             }
-
-            preparedStatement.setString(5, usuario.getCorreo());
-            preparedStatement.setString(6, usuario.getclave());
-            if (usuario.getIdCiudad() != null) {
-                preparedStatement.setInt(7, usuario.getIdCiudad());
-            } else {
-                preparedStatement.setNull(7, Types.INTEGER);
-            }
+            preparedStatement.setString(6, usuario.getFotoPerfil());
+            preparedStatement.setString(7, usuario.getDescripcion());
 
             int affectedRows = preparedStatement.executeUpdate();
             if (affectedRows == 0) {
@@ -148,24 +133,16 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER)) {
 
             preparedStatement.setString(1, usuario.getNombre());
-            preparedStatement.setString(2, usuario.getApellidoPaterno());
-            preparedStatement.setString(3, usuario.getApellidoMaterno());
-
-            if (usuario.getFechaNacimiento() != null) {
-                preparedStatement.setDate(4, Date.valueOf(usuario.getFechaNacimiento()));
+            preparedStatement.setString(2, usuario.getCorreo());
+            preparedStatement.setString(3, usuario.getContraseña());
+            preparedStatement.setString(4, usuario.getCiudad());
+            if (usuario.getEdad() != null) {
+                preparedStatement.setInt(5, usuario.getEdad());
             } else {
-                preparedStatement.setNull(4, Types.DATE);
+                preparedStatement.setNull(5, java.sql.Types.INTEGER);
             }
-
-            preparedStatement.setString(5, usuario.getCorreo());
-            preparedStatement.setString(6, usuario.getclave());
-
-            if (usuario.getIdCiudad() != null) {
-                preparedStatement.setInt(7, usuario.getIdCiudad());
-            } else {
-                preparedStatement.setNull(7, Types.INTEGER);
-            }
-
+            preparedStatement.setString(6, usuario.getFotoPerfil());
+            preparedStatement.setString(7, usuario.getDescripcion());
             preparedStatement.setLong(8, usuario.getId());
 
             int affectedRows = preparedStatement.executeUpdate();
@@ -243,26 +220,17 @@ public class UsuarioRepositoryImpl implements IUsuarioRepository {
     // ✅ MAPEO COMPLETO CON TODOS LOS CAMPOS
     private Usuario mapResultSetToUsuarioCompleto(ResultSet resultSet) throws SQLException {
         Usuario usuario = new Usuario();
-        usuario.setId(resultSet.getLong("id_usuario"));
+        usuario.setId(resultSet.getLong("id"));
         usuario.setNombre(resultSet.getString("nombre"));
-        usuario.setApellidoPaterno(resultSet.getString("apellido_paterno"));
-        usuario.setApellidoMaterno(resultSet.getString("apellido_materno"));
-
-        // Manejar fecha de nacimiento (puede ser null)
-        Date fechaNac = resultSet.getDate("fecha_nacimiento");
-        if (fechaNac != null) {
-            usuario.setFechaNacimiento(fechaNac.toLocalDate());
-        }
-
         usuario.setCorreo(resultSet.getString("correo"));
-        usuario.setClave(resultSet.getString("clave"));
-
-        // Manejar ciudad (puede ser null)
-        int ciudadId = resultSet.getInt("id_ciudad");
+        usuario.setContraseña(resultSet.getString("contraseña"));
+        usuario.setCiudad(resultSet.getString("ciudad"));
+        int edad = resultSet.getInt("edad");
         if (!resultSet.wasNull()) {
-            usuario.setIdCiudad(ciudadId);
+            usuario.setEdad(edad);
         }
-
+        usuario.setFotoPerfil(resultSet.getString("foto_perfil"));
+        usuario.setDescripcion(resultSet.getString("descripcion"));
         return usuario;
     }
 }

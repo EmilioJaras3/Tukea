@@ -22,7 +22,7 @@ public class CategoriaServiceImpl implements ICategoriaService {
         ArrayList<Categoria> categorias = categoriaRepository.findAll();
         return categorias.stream()
                 .map(c -> new CreateCategoriaResponse(
-                        c.getId().intValue(),    // Long → Integer
+                        c.getId() != null ? c.getId().intValue() : null,    // Long → Integer, null safe
                         c.getNombre(),           // String
                         null                     // descripcionCategoria (tu entidad no lo tiene)
                 ))
@@ -38,7 +38,7 @@ public class CategoriaServiceImpl implements ICategoriaService {
         Categoria nueva = categoriaRepository.save(categoria);
 
         return new CreateCategoriaResponse(
-                nueva.getId().intValue(),    // Long → Integer
+                nueva.getId() != null ? nueva.getId().intValue() : null,    // Long → Integer, null safe
                 nueva.getNombre(),           // String
                 request.getDescripcionCategoria()  // Del request, ya que la entidad no lo guarda
         );

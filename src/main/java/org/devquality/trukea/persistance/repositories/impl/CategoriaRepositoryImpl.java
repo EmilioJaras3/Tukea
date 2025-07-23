@@ -18,7 +18,7 @@ public class CategoriaRepositoryImpl implements ICategoriaRepository {
     @Override
     public ArrayList<Categoria> findAll() {
         ArrayList<Categoria> lista = new ArrayList<>();
-        String sql = "SELECT id, nombre FROM categoria";
+        String sql = "SELECT id, nombre FROM categorias";
 
         try (Connection conn = databaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -40,7 +40,7 @@ public class CategoriaRepositoryImpl implements ICategoriaRepository {
 
     @Override
     public Categoria save(Categoria categoria) {
-        String sql = "INSERT INTO categoria (nombre) VALUES (?)";
+        String sql = "INSERT INTO categorias (nombre) VALUES (?)";
         try (Connection conn = databaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -61,7 +61,7 @@ public class CategoriaRepositoryImpl implements ICategoriaRepository {
 
     @Override
     public Categoria findById(Long id) {
-        String sql = "SELECT id, nombre FROM categoria WHERE id = ?";
+        String sql = "SELECT id, nombre FROM categorias WHERE id = ?";
         try (Connection conn = databaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 

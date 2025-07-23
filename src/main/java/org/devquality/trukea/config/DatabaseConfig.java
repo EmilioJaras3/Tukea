@@ -29,11 +29,11 @@ public class DatabaseConfig{
     private void setupDataSource(){
         HikariConfig config = new HikariConfig();
 
-        String url = "localhost";
+        String url = "52.71.195.110";
         String port = "3306";
-        String username = "root";
-        String password = "emico311006L";
-        String database = "bd_Trukea";
+        String username = "admin";
+        String password = "Angelito7@2024!";
+        String database = "trukea";
 
         String jdbcUrl = String.format("jdbc:mysql://%s:%s/%s?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC", url, port, database);
 

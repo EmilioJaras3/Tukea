@@ -137,7 +137,7 @@ public class ProductoController {
         try {
             CreateProductoRequest request = ctx.bodyAsClass(CreateProductoRequest.class);
 
-            if (request == null || !request.isValid()) {
+            if (request == null ) {
                 ctx.status(HttpStatus.BAD_REQUEST).json(new ErrorResponse("Datos de producto inválidos. Nombre, descripción, categoría y usuario son requeridos"));
                 return;
             }
@@ -172,7 +172,7 @@ public class ProductoController {
 
             CreateProductoRequest request = ctx.bodyAsClass(CreateProductoRequest.class);
 
-            if (request == null || !request.isValid()) {
+            if (request == null ) {
                 ctx.status(HttpStatus.BAD_REQUEST).json(new ErrorResponse("Datos de producto inválidos. Nombre, descripción, categoría y usuario son requeridos"));
                 return;
             }

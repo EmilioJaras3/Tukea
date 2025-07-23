@@ -1,110 +1,70 @@
 package org.devquality.trukea.persistance.entities;
 
-import java.time.LocalDate;
-
 public class Usuario {
-
     private Long id;
     private String nombre;
-    private String apellidoPaterno;
-    private String apellidoMaterno;
-    private LocalDate fechaNacimiento;
     private String correo;
-    private String clave;
-    private Integer idCiudad;
+    private String contraseña;
+    private String ciudad;
+    private Integer edad;
+    private String fotoPerfil;
+    private String descripcion;
 
-    public Usuario() {
-    }
+    public Usuario() {}
 
-    public Usuario(Long id, String nombre, String correo, String clave) {
+    public Usuario(Long id, String nombre, String correo, String contraseña) {
         this.id = id;
         this.nombre = nombre;
         this.correo = correo;
-        this.clave = clave;
+        this.contraseña = contraseña;
     }
 
-    // TODOS los getters y setters
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
-
-    // Método para compatibilidad con CreateUsuarioResponse
-    public Integer getIdUsuario() {
-        return id != null ? id.intValue() : null;
-    }
-
     public String getNombre() {
         return nombre;
     }
-
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
-    public String getApellidoPaterno() {
-        return apellidoPaterno;
-    }
-
-    public void setApellidoPaterno(String apellidoPaterno) {
-        this.apellidoPaterno = apellidoPaterno;
-    }
-
-    public String getApellidoMaterno() {
-        return apellidoMaterno;
-    }
-
-    public void setApellidoMaterno(String apellidoMaterno) {
-        this.apellidoMaterno = apellidoMaterno;
-    }
-
-    public LocalDate getFechaNacimiento() {
-        return fechaNacimiento;
-    }
-
-    public void setFechaNacimiento(LocalDate fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
-    }
-
     public String getCorreo() {
         return correo;
     }
-
     public void setCorreo(String correo) {
         this.correo = correo;
     }
-
-    public String getclave() {
-        return clave;
+    public String getContraseña() {
+        return contraseña;
     }
-
-    public void setclave(String clave) {
-        this.clave = clave;
+    public void setContraseña(String contraseña) {
+        this.contraseña = contraseña;
     }
-
-    // Método alternativo para compatibilidad
-    public String getClave() {
-        return clave;
+    public String getCiudad() {
+        return ciudad;
     }
-
-    public void setClave(String Clave) {
-        this.clave = Clave;
+    public void setCiudad(String ciudad) {
+        this.ciudad = ciudad;
     }
-
-    public Integer getIdCiudad() {
-        return idCiudad;
+    public Integer getEdad() {
+        return edad;
     }
-
-    public void setIdCiudad(Integer idCiudad) {
-        this.idCiudad = idCiudad;
+    public void setEdad(Integer edad) {
+        this.edad = edad;
     }
-
-
-    public String getClave(String Clave) {
-        this.clave = Clave;
-        return Clave;
+    public String getFotoPerfil() {
+        return fotoPerfil;
+    }
+    public void setFotoPerfil(String fotoPerfil) {
+        this.fotoPerfil = fotoPerfil;
+    }
+    public String getDescripcion() {
+        return descripcion;
+    }
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 }

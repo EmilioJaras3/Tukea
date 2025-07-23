@@ -1,90 +1,72 @@
 package org.devquality.trukea.web.dtos.usuarios.request;
 
-import java.time.LocalDate;
-
 public class CreateUsuarioRequest {
     private String nombre;
-    private String apellidoPaterno;
-    private String apellidoMaterno;
-    private LocalDate fechaNacimiento;
     private String correo;
-    private String clave;
-    private Integer idCiudad;
+    private String contraseña;
+    private String ciudad;
+    private Integer edad;
+    private String fotoPerfil;
+    private String descripcion;
 
     public CreateUsuarioRequest() {}
 
-    public CreateUsuarioRequest(String nombre, String apellidoPaterno, String apellidoMaterno,
-                                LocalDate fechaNacimiento, String correo, String clave, Integer idCiudad) {
+    public CreateUsuarioRequest(String nombre, String correo, String contraseña, String ciudad, Integer edad, String fotoPerfil, String descripcion) {
         this.nombre = nombre;
-        this.apellidoPaterno = apellidoPaterno;
-        this.apellidoMaterno = apellidoMaterno;
-        this.fechaNacimiento = fechaNacimiento;
         this.correo = correo;
-        this.clave = clave;
-        this.idCiudad = idCiudad;
+        this.contraseña = contraseña;
+        this.ciudad = ciudad;
+        this.edad = edad;
+        this.fotoPerfil = fotoPerfil;
+        this.descripcion = descripcion;
     }
 
     public boolean isValid() {
         return nombre != null && !nombre.trim().isEmpty() &&
-                apellidoPaterno != null && !apellidoPaterno.trim().isEmpty() &&
                 correo != null && !correo.trim().isEmpty() &&
-                clave != null && !clave.trim().isEmpty();
+                contraseña != null && !contraseña.trim().isEmpty();
     }
 
-    // Getters y setters
     public String getNombre() {
         return nombre;
     }
-
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
-    public String getApellidoPaterno() {
-        return apellidoPaterno;
-    }
-
-    public void setApellidoPaterno(String apellidoPaterno) {
-        this.apellidoPaterno = apellidoPaterno;
-    }
-
-    public String getApellidoMaterno() {
-        return apellidoMaterno;
-    }
-
-    public void setApellidoMaterno(String apellidoMaterno) {
-        this.apellidoMaterno = apellidoMaterno;
-    }
-
-    public LocalDate getFechaNacimiento() {
-        return fechaNacimiento;
-    }
-
-    public void setFechaNacimiento(LocalDate fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
-    }
-
     public String getCorreo() {
         return correo;
     }
-
     public void setCorreo(String correo) {
         this.correo = correo;
     }
-
-    public String getClave() {
-        return clave;
+    public String getContraseña() {
+        return contraseña;
     }
-
-    public void setClave(String clave) {
-        this.clave = clave;
+    public void setContraseña(String contraseña) {
+        this.contraseña = contraseña;
     }
-
-    public Integer getIdCiudad() {
-        return idCiudad;
+    public String getCiudad() {
+        return ciudad;
     }
-
-    public void setIdCiudad(Integer idCiudad) {
-        this.idCiudad = idCiudad;
+    public void setCiudad(String ciudad) {
+        this.ciudad = ciudad;
+    }
+    public Integer getEdad() {
+        return edad;
+    }
+    public void setEdad(Integer edad) {
+        this.edad = edad;
+    }
+    public String getFotoPerfil() {
+        return fotoPerfil;
+    }
+    public void setFotoPerfil(String fotoPerfil) {
+        this.fotoPerfil = fotoPerfil;
+    }
+    public String getDescripcion() {
+        return descripcion;
+    }
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 }

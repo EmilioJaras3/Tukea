@@ -4,6 +4,7 @@ import org.devquality.trukea.persistance.entities.Producto;
 import org.devquality.trukea.persistance.repositories.IProductoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.devquality.trukea.config.DatabaseConfig;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,17 +18,14 @@ public class ProductoRepositoryImpl implements IProductoRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductoRepositoryImpl.class);
 
-    public ProductoRepositoryImpl() {}
+    private final DatabaseConfig databaseConfig;
+
+    public ProductoRepositoryImpl(DatabaseConfig databaseConfig) {
+        this.databaseConfig = databaseConfig;
+    }
 
     private Connection getConnection() throws SQLException {
-        String url = "jdbc:mysql://localhost:3306/bd_trukea";
-        String user = "root";
-        String password = "emico311006L"; // Tu contraseña real. ¡BIEN HECHO!
-
-        try { Class.forName("com.mysql.cj.jdbc.Driver"); } catch (ClassNotFoundException e) {
-            throw new SQLException("Driver de MySQL no encontrado.", e);
-        }
-        return DriverManager.getConnection(url, user, password);
+        return databaseConfig.getConnection();
     }
 
     // --- HELPER DE MAPEO ---

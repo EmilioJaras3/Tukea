@@ -13,9 +13,8 @@ public class UsuariosRoutes {
 
     public void configure(Javalin app) {
         // GET endpoints
-        app.get("/api/usuarios", controller::getAllUsuarios);
+        app.get("/api/usuarios/id/{id:\\d+}", controller::getUserById);
         app.get("/api/usuarios/{email}", controller::getUserByEmail);
-        app.get("/api/usuarios/id/{id}", controller::getUserById);
 
         // POST endpoint
         app.post("/api/usuarios", controller::createUser);
