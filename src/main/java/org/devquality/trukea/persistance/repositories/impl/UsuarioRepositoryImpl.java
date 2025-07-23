@@ -9,6 +9,7 @@ import org.devquality.trukea.persistance.repositories.IUsuarioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+//esta es una prueba de commit
 public class UsuarioRepositoryImpl implements IUsuarioRepository {
     private final DatabaseConfig databaseConfig;
     private static final Logger logger = LoggerFactory.getLogger(UsuarioRepositoryImpl.class);

@@ -1,27 +1,25 @@
-// =====================================================
-// ✅ 6. PRODUCTO ENTITY AMPLIADA (PARA QUE COINCIDA CON EL REPOSITORY)
-// =====================================================
 
 package org.devquality.trukea.persistance.entities;
 
 import java.time.LocalDateTime;
+import org.devquality.trukea.persistance.entities.Usuario;
 
 public class Producto {
-    private Long id;
+    private Long id_producto;
     private String nombre;
     private String descripcion;
-    private Integer valorEstimado;        // ⭐ CAMPO AGREGADO
-    private Integer idCalidad;            // ⭐ CAMPO AGREGADO
+    private Integer valorEstimado = 0; // Valor por defecto
+    private Integer idCalidad;
     private Long categoriaId;
-    private Long idUsuarioPropietario;    // ⭐ CAMPO AGREGADO (reemplaza usuarioId)
-    private LocalDateTime fechaCreacion;  // ⭐ CAMPO AGREGADO
-    private Boolean activo;               // ⭐ CAMPO AGREGADO
+    private Long idUsuarioPropietario;
+    private LocalDateTime fechaCreacion;
+    private Boolean activo;
 
     public Producto() {}
 
     public Producto(Long id, String nombre, String descripcion, Integer valorEstimado,
                     Integer idCalidad, Long categoriaId, Long idUsuarioPropietario) {
-        this.id = id;
+        this.id_producto = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.valorEstimado = valorEstimado;
@@ -33,8 +31,8 @@ public class Producto {
     }
 
     // Getters y Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() { return id_producto; }
+    public void setId(Long id) { this.id_producto = id; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
@@ -42,9 +40,8 @@ public class Producto {
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
-    // ⭐ NUEVOS GETTERS/SETTERS
     public Integer getValorEstimado() { return valorEstimado; }
-    public void setValorEstimado(Integer valorEstimado) { this.valorEstimado = valorEstimado; }
+    public void setValorEstimado(int valorEstimado) { this.valorEstimado = valorEstimado; }
 
     public Integer getIdCalidad() { return idCalidad; }
     public void setIdCalidad(Integer idCalidad) { this.idCalidad = idCalidad; }
