@@ -8,8 +8,13 @@ import org.devquality.trukea.web.dtos.productos.response.CreateProductoResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
+/**
+ * Implementación COMPLETA de la lógica de negocio para la gestión de productos.
+ */
 public class ProductoServiceImpl implements IProductoService {
 
     private final IProductoRepository productoRepository;
@@ -19,241 +24,151 @@ public class ProductoServiceImpl implements IProductoService {
         this.productoRepository = productoRepository;
     }
 
-    @Override
-    public ArrayList<CreateProductoResponse> findAll() {
-        try {
-            ArrayList<Producto> productos = productoRepository.findAllProductos();
-            ArrayList<CreateProductoResponse> productoResponses = new ArrayList<>();
-
-            for (Producto producto : productos) {
-                CreateProductoResponse createProductoResponse = new CreateProductoResponse(
-                        producto.getId().intValue(),              // Long → Integer
-                        producto.getNombre(),                     // String
-                        producto.getDescripcion(),                // String
-                        null,                                     // valorEstimado (no está en tu entidad)
-                        null,                                     // idCalidad (no está en tu entidad)
-                        producto.getCategoriaId().intValue()      // Long → Integer
-                );
-                productoResponses.add(createProductoResponse);
-            }
-            return productoResponses;
-        } catch (Exception e) {
-            logger.error("Error in findAll productos service", e);
-            throw new RuntimeException("Error al obtener todos los productos", e);
-        }
-    }
-
-    @Override
-    public Producto findById(Long id) {
-        try {
-            if (id == null || id <= 0) {
-                throw new IllegalArgumentException("El ID debe ser un número positivo");
-            }
-            return productoRepository.findById(id);
-        } catch (Exception e) {
-            logger.error("Error in findById service for id: {}", id, e);
-            throw new RuntimeException("Error al buscar producto por ID", e);
-        }
-    }
-
-    @Override
-    public ArrayList<CreateProductoResponse> findByUsuarioId(Long usuarioId) {
-        try {
-            if (usuarioId == null || usuarioId <= 0) {
-                throw new IllegalArgumentException("El ID del usuario debe ser un número positivo");
-            }
-
-            ArrayList<Producto> productos = productoRepository.findByUsuarioId(usuarioId);
-            ArrayList<CreateProductoResponse> productoResponses = new ArrayList<>();
-
-            for (Producto producto : productos) {
-                CreateProductoResponse createProductoResponse = new CreateProductoResponse(
-                        producto.getId().intValue(),              // Long → Integer
-                        producto.getNombre(),                     // String
-                        producto.getDescripcion(),                // String
-                        null,                                     // valorEstimado
-                        null,                                     // idCalidad
-                        producto.getCategoriaId().intValue()      // Long → Integer
-                );
-                productoResponses.add(createProductoResponse);
-            }
-            return productoResponses;
-        } catch (Exception e) {
-            logger.error("Error in findByUsuarioId service for usuarioId: {}", usuarioId, e);
-            throw new RuntimeException("Error al buscar productos por usuario", e);
-        }
-    }
-
-    @Override
-    public ArrayList<CreateProductoResponse> findByCategoriaId(Long categoriaId) {
-        try {
-            if (categoriaId == null || categoriaId <= 0) {
-                throw new IllegalArgumentException("El ID de la categoría debe ser un número positivo");
-            }
-
-            ArrayList<Producto> productos = productoRepository.findByCategoriaId(categoriaId);
-            ArrayList<CreateProductoResponse> productoResponses = new ArrayList<>();
-
-            for (Producto producto : productos) {
-                CreateProductoResponse createProductoResponse = new CreateProductoResponse(
-                        producto.getId().intValue(),              // Long → Integer
-                        producto.getNombre(),                     // String
-                        producto.getDescripcion(),                // String
-                        null,                                     // valorEstimado
-                        null,                                     // idCalidad
-                        producto.getCategoriaId().intValue()      // Long → Integer
-                );
-                productoResponses.add(createProductoResponse);
-            }
-            return productoResponses;
-        } catch (Exception e) {
-            logger.error("Error in findByCategoriaId service for categoriaId: {}", categoriaId, e);
-            throw new RuntimeException("Error al buscar productos por categoría", e);
-        }
-    }
+    // --- OPERACIONES DE ESCRITURA ---
 
     @Override
     public CreateProductoResponse createProducto(CreateProductoRequest request) {
         try {
-            // Validar request
             if (request == null || !request.isValid()) {
-                throw new IllegalArgumentException("Los datos del producto son inválidos");
+                throw new IllegalArgumentException("Datos de producto inválidos.");
             }
-
-            // Crear entidad Producto
+            if (request.getIdUsuario() == null || request.getIdUsuario() <= 0) {
+                throw new IllegalArgumentException("El ID del usuario es un campo requerido.");
+            }
+            if (request.getIdCategoria() == null || request.getIdCategoria() <= 0) {
+                throw new IllegalArgumentException("El ID de la categoría es un campo requerido.");
+            }
             Producto producto = new Producto();
             producto.setNombre(request.getNombreProducto());
             producto.setDescripcion(request.getDescripcionProducto());
-            producto.setCategoriaId(request.getIdCategoria().longValue());  // Integer → Long
-            // usuarioId se puede agregar después si es necesario
+            producto.setCategoriaId(request.getIdCategoria().longValue());
+            producto.setUsuarioId(request.getIdUsuario().longValue());
+            producto.setValorEstimado(request.getValorEstimado() != null ? request.getValorEstimado() : 0);
+            producto.setIdCalidad(request.getIdCalidad());
+            producto.setFechaCreacion(LocalDateTime.now());
+            producto.setActivo(true);
 
-            // Guardar en base de datos
-            Producto productoCreado = productoRepository.createProducto(producto);
-
-            // Retornar DTO de respuesta
-            return new CreateProductoResponse(
-                    productoCreado.getId().intValue(),            // Long → Integer
-                    productoCreado.getNombre(),                   // String
-                    productoCreado.getDescripcion(),              // String
-                    request.getValorEstimado(),                   // Del request
-                    request.getIdCalidad(),                       // Del request
-                    productoCreado.getCategoriaId().intValue()    // Long → Integer
-            );
-
+            Producto productoCreado = this.productoRepository.createProducto(producto);
+            return mapToCreateProductoResponse(productoCreado);
         } catch (IllegalArgumentException e) {
-            logger.warn("Validation error in createProducto: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
-            logger.error("Error in createProducto service", e);
-            throw new RuntimeException("Error al crear producto", e);
+            logger.error("Error inesperado en el servicio al crear producto", e);
+            throw new RuntimeException("Ocurrió un error inesperado al procesar la solicitud.", e);
         }
     }
 
     @Override
     public CreateProductoResponse updateProducto(Long id, CreateProductoRequest request) {
-        try {
-            // Validar parámetros
-            if (id == null || id <= 0) {
-                throw new IllegalArgumentException("El ID debe ser un número positivo");
-            }
-            if (request == null || !request.isValid()) {
-                throw new IllegalArgumentException("Los datos del producto son inválidos");
-            }
-
-            // Verificar que el producto existe
-            Producto productoExistente = productoRepository.findById(id);
-            if (productoExistente == null) {
-                throw new IllegalArgumentException("Producto no encontrado con ID: " + id);
-            }
-
-            // Actualizar datos
-            productoExistente.setNombre(request.getNombreProducto());
-            productoExistente.setDescripcion(request.getDescripcionProducto());
-            productoExistente.setCategoriaId(request.getIdCategoria().longValue());
-
-            // Guardar cambios
-            Producto productoActualizado = productoRepository.updateProducto(productoExistente);
-
-            // Retornar DTO de respuesta
-            return new CreateProductoResponse(
-                    productoActualizado.getId().intValue(),       // Long → Integer
-                    productoActualizado.getNombre(),              // String
-                    productoActualizado.getDescripcion(),         // String
-                    request.getValorEstimado(),                   // Del request
-                    request.getIdCalidad(),                       // Del request
-                    productoActualizado.getCategoriaId().intValue() // Long → Integer
-            );
-
-        } catch (IllegalArgumentException e) {
-            logger.warn("Validation error in updateProducto: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            logger.error("Error in updateProducto service for id: {}", id, e);
-            throw new RuntimeException("Error al actualizar producto", e);
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("El ID del producto a actualizar es inválido.");
         }
+        Producto productoExistente = this.productoRepository.findById(id);
+        if (productoExistente == null) {
+            throw new IllegalArgumentException("No se encontró un producto con el ID: " + id);
+        }
+
+        productoExistente.setNombre(request.getNombreProducto());
+        productoExistente.setDescripcion(request.getDescripcionProducto());
+        productoExistente.setCategoriaId(request.getIdCategoria().longValue());
+        productoExistente.setValorEstimado(request.getValorEstimado());
+        productoExistente.setIdCalidad(request.getIdCalidad());
+
+        Producto productoActualizado = this.productoRepository.updateProducto(productoExistente);
+        return mapToCreateProductoResponse(productoActualizado);
     }
 
     @Override
     public boolean deleteProducto(Long id) {
-        try {
-            // Validar parámetro
-            if (id == null || id <= 0) {
-                throw new IllegalArgumentException("El ID debe ser un número positivo");
-            }
-
-            // Verificar que el producto existe
-            if (!productoRepository.existsById(id)) {
-                throw new IllegalArgumentException("Producto no encontrado con ID: " + id);
-            }
-
-            // Eliminar producto
-            return productoRepository.deleteProducto(id);
-
-        } catch (IllegalArgumentException e) {
-            logger.warn("Validation error in deleteProducto: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            logger.error("Error in deleteProducto service for id: {}", id, e);
-            throw new RuntimeException("Error al eliminar producto", e);
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("El ID del producto es inválido.");
         }
+        if (!this.productoRepository.existsById(id)) {
+            logger.warn("Se intentó borrar un producto inexistente con ID: {}", id);
+            return false;
+        }
+        return this.productoRepository.deleteProducto(id);
+    }
+
+    // --- OPERACIONES DE LECTURA ---
+
+    @Override
+    public ArrayList<CreateProductoResponse> findAll() {
+        ArrayList<Producto> productos = productoRepository.findAllProductos();
+        return productos.stream()
+                .map(this::mapToCreateProductoResponse)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
-    public boolean existsById(Long id) {
-        try {
-            if (id == null || id <= 0) {
-                return false;
-            }
-            return productoRepository.existsById(id);
-        } catch (Exception e) {
-            logger.error("Error in existsById service for id: {}", id, e);
-            throw new RuntimeException("Error al verificar existencia de producto", e);
+    public Producto findById(Long id) {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("El ID del producto es inválido.");
         }
+        return productoRepository.findById(id);
+    }
+
+    @Override
+    public ArrayList<CreateProductoResponse> findByUsuarioId(Long usuarioId) {
+        if (usuarioId == null || usuarioId <= 0) {
+            throw new IllegalArgumentException("El ID del usuario es inválido.");
+        }
+        ArrayList<Producto> productos = productoRepository.findByUsuarioId(usuarioId);
+        return productos.stream()
+                .map(this::mapToCreateProductoResponse)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    @Override
+    public ArrayList<CreateProductoResponse> findByCategoriaId(Long categoriaId) {
+        if (categoriaId == null || categoriaId <= 0) {
+            throw new IllegalArgumentException("El ID de la categoría es inválido.");
+        }
+        ArrayList<Producto> productos = productoRepository.findByCategoriaId(categoriaId);
+        return productos.stream()
+                .map(this::mapToCreateProductoResponse)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    // --- OPERACIONES DE UTILIDAD ---
+
+    @Override
+    public boolean existsById(Long id) {
+        if (id == null || id <= 0) {
+            return false;
+        }
+        return productoRepository.existsById(id);
     }
 
     @Override
     public int countByUsuarioId(Long usuarioId) {
-        try {
-            if (usuarioId == null || usuarioId <= 0) {
-                return 0;
-            }
-            return productoRepository.countByUsuarioId(usuarioId);
-        } catch (Exception e) {
-            logger.error("Error in countByUsuarioId service for usuarioId: {}", usuarioId, e);
-            throw new RuntimeException("Error al contar productos por usuario", e);
+        if (usuarioId == null || usuarioId <= 0) {
+            return 0;
         }
+        return productoRepository.countByUsuarioId(usuarioId);
     }
 
     @Override
     public int countByCategoriaId(Long categoriaId) {
-        try {
-            if (categoriaId == null || categoriaId <= 0) {
-                return 0;
-            }
-            return productoRepository.countByCategoriaId(categoriaId);
-        } catch (Exception e) {
-            logger.error("Error in countByCategoriaId service for categoriaId: {}", categoriaId, e);
-            throw new RuntimeException("Error al contar productos por categoría", e);
+        if (categoriaId == null || categoriaId <= 0) {
+            return 0;
         }
+        return productoRepository.countByCategoriaId(categoriaId);
+    }
+
+    // --- MÉTODO PRIVADO DE AYUDA (HELPER) ---
+
+    private CreateProductoResponse mapToCreateProductoResponse(Producto producto) {
+        if (producto == null) {
+            return null;
+        }
+        return new CreateProductoResponse(
+                producto.getId() != null ? producto.getId().intValue() : null,
+                producto.getNombre(),
+                producto.getDescripcion(),
+                producto.getValorEstimado(),
+                producto.getIdCalidad(),
+                producto.getCategoriaId() != null ? producto.getCategoriaId().intValue() : null
+        );
     }
 }
