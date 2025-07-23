@@ -69,16 +69,13 @@
       ]
     },
     {
-      "name": "Trueques",
+      "name": "Intercambios",
       "item": [
-        { "name": "Obtener todos los trueques", "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/trueques", "host": ["{{baseUrl}}"], "path": ["api", "trueques"] } } },
-        { "name": "Obtener trueque por ID", "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/trueques/{id}", "host": ["{{baseUrl}}"], "path": ["api", "trueques", ":id"] } } },
-        { "name": "Crear trueque", "request": { "method": "POST", "header": [], "body": { "mode": "raw", "raw": "{\n  \"productoOfrecidoId\": 1,\n  \"productoDeseadoId\": 2,\n  \"estado\": \"Pendiente\"\n}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/api/trueques", "host": ["{{baseUrl}}"], "path": ["api", "trueques"] } } },
-        { "name": "Eliminar trueque", "request": { "method": "DELETE", "header": [], "url": { "raw": "{{baseUrl}}/api/trueques/{id}", "host": ["{{baseUrl}}"], "path": ["api", "trueques", ":id"] } } },
-        { "name": "Obtener trueques enviados por usuario", "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/trueques/enviados/{usuarioId}", "host": ["{{baseUrl}}"], "path": ["api", "trueques", "enviados", ":usuarioId"] } } },
-        { "name": "Obtener trueques recibidos por usuario", "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/trueques/recibidos/{usuarioId}", "host": ["{{baseUrl}}"], "path": ["api", "trueques", "recibidos", ":usuarioId"] } } },
-        { "name": "Aceptar trueque", "request": { "method": "PUT", "header": [], "url": { "raw": "{{baseUrl}}/api/trueques/{id}/aceptar", "host": ["{{baseUrl}}"], "path": ["api", "trueques", ":id", "aceptar"] } } },
-        { "name": "Rechazar trueque", "request": { "method": "PUT", "header": [], "url": { "raw": "{{baseUrl}}/api/trueques/{id}/rechazar", "host": ["{{baseUrl}}"], "path": ["api", "trueques", ":id", "rechazar"] } } }
+        { "name": "Obtener todos los intercambios", "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/intercambios", "host": ["{{baseUrl}}"], "path": ["api", "intercambios"] } } },
+        { "name": "Obtener intercambio por ID", "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/intercambios/{id}", "host": ["{{baseUrl}}"], "path": ["api", "intercambios", ":id"] } } },
+        { "name": "Crear intercambio", "request": { "method": "POST", "header": [], "body": { "mode": "raw", "raw": "{\n  \"historialId\": 1,\n  \"publicacion1Id\": 2,\n  \"publicacion2Id\": 3\n}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/api/intercambios", "host": ["{{baseUrl}}"], "path": ["api", "intercambios"] } } },
+        { "name": "Actualizar intercambio", "request": { "method": "PUT", "header": [], "body": { "mode": "raw", "raw": "{\n  \"historialId\": 1,\n  \"publicacion1Id\": 2,\n  \"publicacion2Id\": 3\n}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/api/intercambios/{id}", "host": ["{{baseUrl}}"], "path": ["api", "intercambios", ":id"] } } },
+        { "name": "Eliminar intercambio", "request": { "method": "DELETE", "header": [], "url": { "raw": "{{baseUrl}}/api/intercambios/{id}", "host": ["{{baseUrl}}"], "path": ["api", "intercambios", ":id"] } } }
       ]
     },
     {
@@ -100,6 +97,17 @@
       "item": [
         { "name": "Registrar cambio de estatus", "request": { "method": "POST", "header": [], "body": { "mode": "raw", "raw": "{\n  \"idPublicacion\": 1,\n  \"status\": \"Activo\",\n  \"modificadoPor\": 1\n}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/api/publicacion-estatus", "host": ["{{baseUrl}}"], "path": ["api", "publicacion-estatus"] } } },
         { "name": "Obtener historial de estatus", "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/publicacion-estatus/{id}", "host": ["{{baseUrl}}"], "path": ["api", "publicacion-estatus", ":id"] } } }
+      ]
+    },
+    {
+      "name": "Historiales",
+      "item": [
+        { "name": "Obtener todos los historiales", "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/historiales", "host": ["{{baseUrl}}"], "path": ["api", "historiales"] } } },
+        { "name": "Obtener historial por ID", "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/historiales/{id}", "host": ["{{baseUrl}}"], "path": ["api", "historiales", ":id"] } } },
+        { "name": "Obtener historiales por usuario", "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/api/historiales/usuario/{uid}", "host": ["{{baseUrl}}"], "path": ["api", "historiales", "usuario", ":uid"] } } },
+        { "name": "Crear historial", "request": { "method": "POST", "header": [], "body": { "mode": "raw", "raw": "{\n  \"truequeId\": 1,\n  \"productoOfrecidoId\": 2,\n  \"productoDeseadoId\": 3,\n  \"usuarioOfrecidoId\": 4,\n  \"usuarioRecibidoId\": 5,\n  \"fecha\": \"2024-06-01T12:00:00\"\n}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/api/historiales", "host": ["{{baseUrl}}"], "path": ["api", "historiales"] } } },
+        { "name": "Actualizar historial", "request": { "method": "PUT", "header": [], "body": { "mode": "raw", "raw": "{\n  \"truequeId\": 1,\n  \"productoOfrecidoId\": 2,\n  \"productoDeseadoId\": 3,\n  \"usuarioOfrecidoId\": 4,\n  \"usuarioRecibidoId\": 5,\n  \"fecha\": \"2024-06-01T12:00:00\"\n}", "options": { "raw": { "language": "json" } } }, "url": { "raw": "{{baseUrl}}/api/historiales/{id}", "host": ["{{baseUrl}}"], "path": ["api", "historiales", ":id"] } } },
+        { "name": "Eliminar historial", "request": { "method": "DELETE", "header": [], "url": { "raw": "{{baseUrl}}/api/historiales/{id}", "host": ["{{baseUrl}}"], "path": ["api", "historiales", ":id"] } } }
       ]
     }
   ],

@@ -1,34 +1,25 @@
-package org.devquality.trukea.persistance.entities;
+package org.devquality.trukea.web.dtos.trueques.request;
 
-import java.time.LocalDateTime;
-
-public class Trueque {
-
-    private Long id;
+public class CreateIntercambioRequest {
     private Long productoOfrecidoId;
     private Long productoDeseadoId;
     private String estado;
-    private LocalDateTime fecha;
 
-    public Trueque(Long id, Long productoOfrecidoId, Long productoDeseadoId, String estado, LocalDateTime fecha) {
-        this.id = id;
+    public CreateIntercambioRequest() {}
+
+    public CreateIntercambioRequest(Long productoOfrecidoId, Long productoDeseadoId, String estado) {
         this.productoOfrecidoId = productoOfrecidoId;
         this.productoDeseadoId = productoDeseadoId;
         this.estado = estado;
-        this.fecha = fecha;
     }
 
-    public Trueque() {
+    public boolean isValid() {
+        return productoOfrecidoId != null && productoOfrecidoId > 0 &&
+                productoDeseadoId != null && productoDeseadoId > 0 &&
+                !productoOfrecidoId.equals(productoDeseadoId);
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    // Getters y setters
     public Long getProductoOfrecidoId() {
         return productoOfrecidoId;
     }
@@ -51,13 +42,5 @@ public class Trueque {
 
     public void setEstado(String estado) {
         this.estado = estado;
-    }
-
-    public LocalDateTime getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(LocalDateTime fecha) {
-        this.fecha = fecha;
     }
 }

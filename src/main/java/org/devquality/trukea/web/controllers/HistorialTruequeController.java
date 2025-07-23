@@ -52,4 +52,42 @@ public class HistorialTruequeController {
             ctx.status(HttpStatus.BAD_REQUEST).json(new ErrorResponse("ID inválido"));
         }
     }
+
+    // POST /api/historiales
+    public void create(Context ctx) {
+        try {
+            var req = ctx.bodyAsClass(org.devquality.trukea.persistance.entities.HistorialTrueque.class);
+            var creado = service.crearDirecto(req);
+            ctx.status(HttpStatus.CREATED).json(creado);
+        } catch (Exception e) {
+            log.error("create historial", e);
+            ctx.status(HttpStatus.BAD_REQUEST).json(new ErrorResponse("Datos inválidos"));
+        }
+    }
+
+    // PUT /api/historiales/{id}
+    public void update(Context ctx) {
+        try {
+            Long id = Long.parseLong(ctx.pathParam("id"));
+            var req = ctx.bodyAsClass(org.devquality.trukea.persistance.entities.HistorialTrueque.class);
+            var actualizado = service.actualizar(id, req);
+            ctx.status(HttpStatus.OK).json(actualizado);
+        } catch (Exception e) {
+            log.error("update historial", e);
+            ctx.status(HttpStatus.BAD_REQUEST).json(new ErrorResponse("Datos o ID inválidos"));
+        }
+    }
+
+    // DELETE /api/historiales/{id}
+    public void delete(Context ctx) {
+        try {
+            Long id = Long.parseLong(ctx.pathParam("id"));
+            boolean ok = service.eliminar(id);
+            if (ok) ctx.status(HttpStatus.OK).json("Historial eliminado");
+            else ctx.status(HttpStatus.NOT_FOUND).json(new ErrorResponse("No encontrado"));
+        } catch (Exception e) {
+            log.error("delete historial", e);
+            ctx.status(HttpStatus.BAD_REQUEST).json(new ErrorResponse("ID inválido"));
+        }
+    }
 }

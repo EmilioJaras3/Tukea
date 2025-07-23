@@ -23,7 +23,7 @@ import org.devquality.trukea.routes.UsuariosRoutes;
 import org.devquality.trukea.routes.ProductosRoutes;
 import org.devquality.trukea.routes.CategoriasRoutes;
 import org.devquality.trukea.routes.CalificacionesRoutes;
-import org.devquality.trukea.routes.TruequesRoutes;
+import org.devquality.trukea.routes.IntercambiosRoutes;
 import org.devquality.trukea.routes.ImagenesRoutes;
 import org.devquality.trukea.routes.ZonaRoutes;
 import org.devquality.trukea.routes.PublicacionEstastusRoutes;
@@ -52,7 +52,7 @@ public class Routes {
         UsuarioRepositoryImpl usuarioRepository = new UsuarioRepositoryImpl(databaseConfig);
         CategoriaRepositoryImpl categoriaRepository = new CategoriaRepositoryImpl(databaseConfig);
         CalificacionesRepositoryImpl calificacionesRepository = new CalificacionesRepositoryImpl(databaseConfig);
-        TruequeRepositoryImpl truequeRepository = new TruequeRepositoryImpl(databaseConfig);
+        IntercambioRepositoryImpl intercambioRepository = new IntercambioRepositoryImpl(databaseConfig);
         PublicacionRepositoryImpl publicacionRepository = new PublicacionRepositoryImpl(databaseConfig);
         CalidadRepositoryImpl calidadRepository = new CalidadRepositoryImpl(databaseConfig);
         // Repositorio de Productos que maneja su propia conexión
@@ -70,7 +70,7 @@ public class Routes {
         CategoriaServiceImpl categoriaService = new CategoriaServiceImpl(categoriaRepository);
         ProductoServiceImpl productoService = new ProductoServiceImpl(productoRepository);
         CalificacionesServiceImpl calificacionesService = new CalificacionesServiceImpl(calificacionesRepository);
-        TruequeServiceImpl truequeService = new TruequeServiceImpl(truequeRepository);
+        IntercambioServiceImpl intercambioService = new IntercambioServiceImpl(intercambioRepository);
         PublicacionServiceImpl publicacionService = new PublicacionServiceImpl(publicacionRepository);
         CalidadServiceImpl calidadService = new CalidadServiceImpl(calidadRepository);
         ZonaServiceImpl zonaService = new ZonaServiceImpl(zonaRepository);
@@ -87,7 +87,7 @@ public class Routes {
         CategoriaController categoriaController = new CategoriaController(categoriaService);
         ProductoController productoController = new ProductoController(productoService);
         CalificacionesController calificacionesController = new CalificacionesController(calificacionesService);
-        TruequeController truequeController = new TruequeController(truequeService);
+        IntercambioController intercambioController = new IntercambioController(intercambioService);
         PublicacionController publicacionController = new PublicacionController(publicacionService);
         CalidadController calidadController = new CalidadController(calidadService);
         ZonaController zonaController = new ZonaController(zonaService);
@@ -104,71 +104,21 @@ public class Routes {
         app.get("/api/health", ctx -> ctx.json("API Trukea funcionando correctamente ✅"));
         app.get("/api/status", ctx -> ctx.json("Server running"));
 
-        // --- RUTAS DE USUARIOS ---
-        app.get("/api/usuarios", usuarioController::getAllUsuarios);
-        app.get("/api/usuarios/{id}", usuarioController::getUserById);
-        app.post("/api/usuarios", usuarioController::createUser);
+        // --- RUTAS DELEGADAS ---
+        new UsuariosRoutes(usuarioController).configure(app);
+        new ProductosRoutes(productoController).configure(app);
+        new CategoriasRoutes(categoriaController).configure(app);
+        new CalificacionesRoutes(calificacionesController).configure(app);
+        new IntercambiosRoutes(intercambioController).configure(app);
+        new ImagenesRoutes(imagenController).configure(app);
 
-        // --- RUTAS DE CATEGORÍAS ---
-        app.get("/api/categorias", categoriaController::getAllCategorias);
-        app.get("/api/categorias/{id}", categoriaController::getCategoriaById);
-        app.post("/api/categorias", categoriaController::createCategoria);
-
-        // --- RUTAS DE PRODUCTOS ---
-        app.get("/api/productos", productoController::getAllProductos);
-        app.get("/api/productos/{id}", productoController::getProductoById);
-        app.get("/api/productos/usuario/{usuarioId}", productoController::getProductosByUsuario);
-        app.get("/api/productos/categoria/{categoriaId}", productoController::getProductosByCategoria);
-        app.post("/api/productos", productoController::createProducto);
-        app.put("/api/productos/{id}", productoController::updateProducto);
-        app.delete("/api/productos/{id}", productoController::deleteProducto);
-        app.get("/api/productos/usuario/{usuarioId}/count", productoController::countProductosByUsuario);
-
-        // --- RUTAS DE CALIFICACIONES ---
-        app.get("/api/calificaciones", calificacionesController::getAll);
-        app.get("/api/calificaciones/{id}", calificacionesController::getById);
-        app.post("/api/calificaciones", calificacionesController::create);
-        app.delete("/api/calificaciones/{id}", calificacionesController::delete);
-        app.get("/api/calificaciones/usuario/{usuarioId}", calificacionesController::getByUsuario);
-
-        // --- RUTAS DE TRUEQUES ---
-        app.get("/api/trueques", truequeController::getAll);
-        app.get("/api/trueques/{id}", truequeController::getById);
-        app.post("/api/trueques", truequeController::create);
-        app.delete("/api/trueques/{id}", truequeController::delete);
-        app.get("/api/trueques/enviados/{usuarioId}", truequeController::getEnviados);
-        app.get("/api/trueques/recibidos/{usuarioId}", truequeController::getRecibidos);
-        app.put("/api/trueques/{id}/aceptar", truequeController::aceptar);
-        app.put("/api/trueques/{id}/rechazar", truequeController::rechazar);
-
-        // --- RUTAS DE PUBLICACIONES ---
-        app.get("/api/publicaciones", publicacionController::getAll);
-        app.get("/api/publicaciones/{id}", publicacionController::getById);
-        app.get("/api/publicaciones/usuario/{uid}", publicacionController::getByUsuario);
-        app.post("/api/publicaciones", publicacionController::create);
-        app.put("/api/publicaciones/{id}", publicacionController::update);
-        app.delete("/api/publicaciones/{id}", publicacionController::delete);
-
-        // --- RUTAS DE CALIDAD ---
-        app.get("/api/calidad", calidadController::getAll);
-        app.get("/api/calidad/{id}", calidadController::getById);
-        // app.post("/api/calidad", calidadController::create); // Descomentar si tienes el método
-
-        // --- RUTAS DE HISTORIAL DE TRUEQUE ---
+        // Registrar rutas de historial_trueques
         app.get("/api/historiales", historialTruequeController::getAll);
         app.get("/api/historiales/{id}", historialTruequeController::getById);
         app.get("/api/historiales/usuario/{uid}", historialTruequeController::getByUsuario);
+        app.post("/api/historiales", historialTruequeController::create);
+        app.put("/api/historiales/{id}", historialTruequeController::update);
+        app.delete("/api/historiales/{id}", historialTruequeController::delete);
 
-        // --- RUTAS DE ZONAS ---
-        app.get("/api/zonas", zonaController::getAll);
-        app.post("/api/zonas", zonaController::create);
-        app.get("/api/zonas/{id}/horarios", zonaController::getHorarios);
-
-        // --- RUTAS DE PUBLICACION ESTATUS ---
-        app.post("/api/publicacion-estatus", publicacionEstastusController::registrar);
-        app.get("/api/publicacion-estatus/{id}", publicacionEstastusController::obtenerHistorial);
-
-        // --- RUTAS DE IMÁGENES ---
-        app.post("/api/imagenes", imagenController::subirImagen);
     }
 }

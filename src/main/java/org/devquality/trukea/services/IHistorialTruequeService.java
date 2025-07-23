@@ -10,4 +10,7 @@ public interface IHistorialTruequeService {
     ArrayList<HistorialTruequeResponse> findByUsuarioId(Long usuarioId);
     void crearDesdeTrueque(Long truequeId, Long prodO, Long prodD,
                            Long userO, Long userR);   // ← coincide con la impl
+    org.devquality.trukea.persistance.entities.HistorialTrueque crearDirecto(org.devquality.trukea.persistance.entities.HistorialTrueque h);
+    org.devquality.trukea.persistance.entities.HistorialTrueque actualizar(Long id, org.devquality.trukea.persistance.entities.HistorialTrueque h);
+    boolean eliminar(Long id);
 }

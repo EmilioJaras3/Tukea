@@ -22,12 +22,9 @@ public class HistorialTruequeRepositoryImpl implements IHistorialTruequeReposito
     private HistorialTrueque map(ResultSet rs) throws SQLException {
         HistorialTrueque h = new HistorialTrueque();
         h.setId(rs.getLong("id"));
-        h.setTruequeId(rs.getLong("trueque_id"));
-        h.setProductoOfrecidoId(rs.getLong("producto_ofrecido_id"));
-        h.setProductoDeseadoId(rs.getLong("producto_deseado_id"));
-        h.setUsuarioOfrecidoId(rs.getLong("usuario_ofrecido_id"));
-        h.setUsuarioRecibidoId(rs.getLong("usuario_recibido_id"));
-        h.setFecha(rs.getTimestamp("fecha").toLocalDateTime());
+        h.setSolicitudId(rs.getLong("solicitud_id"));
+        h.setFechaRealizacion(rs.getTimestamp("fecha_realizacion").toLocalDateTime());
+        h.setEstado(rs.getString("estado"));
         return h;
     }
 
@@ -89,30 +86,33 @@ public class HistorialTruequeRepositoryImpl implements IHistorialTruequeReposito
 
     @Override
     public HistorialTrueque save(HistorialTrueque h) {
-        String sql = """
-            INSERT INTO historial_trueques
-            (trueque_id, producto_ofrecido_id, producto_deseado_id,
-             usuario_ofrecido_id, usuario_recibido_id, fecha)
-            VALUES (?,?,?,?,?,?)
-            """;
+        String sql = "INSERT INTO historial_trueques (solicitud_id, fecha_realizacion, estado) VALUES (?, ?, ?)";
         try (Connection c = db.getConnection();
              PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            ps.setLong(1, h.getTruequeId());
-            ps.setLong(2, h.getProductoOfrecidoId());
-            ps.setLong(3, h.getProductoDeseadoId());
-            ps.setLong(4, h.getUsuarioOfrecidoId());
-            ps.setLong(5, h.getUsuarioRecibidoId());
-            ps.setTimestamp(6, Timestamp.valueOf(h.getFecha()));
+            ps.setLong(1, h.getSolicitudId());
+            ps.setTimestamp(2, java.sql.Timestamp.valueOf(h.getFechaRealizacion()));
+            ps.setString(3, h.getEstado());
             ps.executeUpdate();
-
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) h.setId(keys.getLong(1));
             }
             return h;
-
         } catch (SQLException e) {
             log.error("save historial", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public boolean deleteById(Long id) {
+        String sql = "DELETE FROM historial_trueques WHERE id = ?";
+        try (Connection c = db.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setLong(1, id);
+            int affected = ps.executeUpdate();
+            return affected > 0;
+        } catch (SQLException e) {
+            log.error("deleteById historial", e);
             throw new RuntimeException(e);
         }
     }

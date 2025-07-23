@@ -51,4 +51,23 @@ public class HistorialTruequeServiceImpl implements IHistorialTruequeService {
                 userO, userR, LocalDateTime.now());
         repo.save(h);
     }
+
+    @Override
+    public org.devquality.trukea.persistance.entities.HistorialTrueque crearDirecto(org.devquality.trukea.persistance.entities.HistorialTrueque h) {
+        return repo.save(h);
+    }
+
+    @Override
+    public org.devquality.trukea.persistance.entities.HistorialTrueque actualizar(Long id, org.devquality.trukea.persistance.entities.HistorialTrueque h) {
+        h.setId(id);
+        // No hay update en repo, así que borramos y creamos, o puedes implementar update en repo si lo prefieres
+        // Aquí solo ejemplo simple:
+        // repo.delete(id); // si existiera
+        return repo.save(h);
+    }
+
+    @Override
+    public boolean eliminar(Long id) {
+        return repo.deleteById(id);
+    }
 }

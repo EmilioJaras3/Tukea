@@ -8,4 +8,5 @@ public interface IHistorialTruequeRepository {
     ArrayList<HistorialTrueque> findByUsuarioId(Long usuarioId);
     HistorialTrueque findById(Long id);
     HistorialTrueque save(HistorialTrueque historial); // Para crear al aceptar un trueque
+    boolean deleteById(Long id);
 }
