@@ -7,6 +7,11 @@ public class CreateProductoRequest {
     private String descripcionProducto;
     private Integer valorEstimado;
     private Integer idCalidad;
+    // Nuevos campos para adaptarse a la BD y modelo
+    private String categoria;
+    private String estado;
+    private String imagenUrl;
+    private Long zonaSeguraId;
 
     public Long getIdUsuario() {
         return idUsuario;
@@ -55,6 +60,19 @@ public class CreateProductoRequest {
     public void setIdCalidad(Integer idCalidad) {
         this.idCalidad = idCalidad;
     }
+
+    // Getters y setters nuevos
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
+
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
+
+    public String getImagenUrl() { return imagenUrl; }
+    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
+
+    public Long getZonaSeguraId() { return zonaSeguraId; }
+    public void setZonaSeguraId(Long zonaSeguraId) { this.zonaSeguraId = zonaSeguraId; }
 
     public boolean isValid() {
         return idUsuario != null && idUsuario > 0 &&

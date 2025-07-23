@@ -14,7 +14,7 @@ public class ZonaRepositoryImpl implements IZonaRepository {
     @Override
     public List<ZonaSegura> obtenerTodasLasZonas() {
         List<ZonaSegura> lista = new ArrayList<>();
-        String sql = "SELECT * FROM zona_segura";
+        String sql = "SELECT * FROM zonas_seguras";
 
         try (Connection conn = DatabaseConfig.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -22,9 +22,9 @@ public class ZonaRepositoryImpl implements IZonaRepository {
 
             while (rs.next()) {
                 ZonaSegura zona = new ZonaSegura();
-                zona.setIdZona(rs.getLong("id_zona"));
-                zona.setNombreZona(rs.getString("nombre_zona"));
-                zona.setDireccion(rs.getString("direccion"));
+                zona.setIdZona(rs.getLong("id"));
+                zona.setNombreZona(rs.getString("nombre"));
+                zona.setDireccion(rs.getString("ubicacion"));
                 lista.add(zona);
             }
 
@@ -65,7 +65,7 @@ public class ZonaRepositoryImpl implements IZonaRepository {
 
     @Override
     public void crearZona(ZonaSegura zona) {
-        String sql = "INSERT INTO zona_segura (nombre_zona, direccion) VALUES (?, ?)";
+        String sql = "INSERT INTO zonas_seguras (nombre, ubicacion) VALUES (?, ?)";
 
         try (Connection conn = DatabaseConfig.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

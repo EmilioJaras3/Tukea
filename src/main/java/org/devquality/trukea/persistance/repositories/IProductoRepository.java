@@ -10,7 +10,7 @@ public interface IProductoRepository {
     ArrayList<Producto> findAllProductos();
     Producto findById(Long id);
     ArrayList<Producto> findByUsuarioId(Long usuarioId);
-    ArrayList<Producto> findByCategoriaId(Long categoriaId);
+    ArrayList<Producto> findByCategoria(String categoria);
 
     // CREATE operation
     Producto createProducto(Producto producto);
@@ -24,5 +24,5 @@ public interface IProductoRepository {
     // UTILITY operations
     boolean existsById(Long id);
     int countByUsuarioId(Long usuarioId);
-    int countByCategoriaId(Long categoriaId);
+    int countByCategoria(String categoria);
 }

@@ -2,67 +2,44 @@
 package org.devquality.trukea.persistance.entities;
 
 import java.time.LocalDateTime;
-import org.devquality.trukea.persistance.entities.Usuario;
 
 public class Producto {
-    private Long id_producto;
-    private String nombre;
-    private String descripcion;
-    private Integer valorEstimado = 0; // Valor por defecto
-    private Integer idCalidad;
-    private Long categoriaId;
-    private Long idUsuarioPropietario;
-    private LocalDateTime fechaCreacion;
-    private Boolean activo;
+    private Long id; // id de la publicación
+    private Long usuarioId; // usuario_id
+    private String titulo; // titulo
+    private String descripcion; // descripcion
+    private String categoria; // categoria
+    private String estado; // estado (Nuevo, Usado, Buen estado)
+    private String imagenUrl; // imagen_url
+    private Long zonaSeguraId; // zona_segura_id
+    private LocalDateTime fechaPublicacion; // fecha_publicacion
 
     public Producto() {}
 
-    public Producto(Long id, String nombre, String descripcion, Integer valorEstimado,
-                    Integer idCalidad, Long categoriaId, Long idUsuarioPropietario) {
-        this.id_producto = id;
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.valorEstimado = valorEstimado;
-        this.idCalidad = idCalidad;
-        this.categoriaId = categoriaId;
-        this.idUsuarioPropietario = idUsuarioPropietario;
-        this.fechaCreacion = LocalDateTime.now();
-        this.activo = true;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    // Getters y Setters
-    public Long getId() { return id_producto; }
-    public void setId(Long id) { this.id_producto = id; }
+    public Long getUsuarioId() { return usuarioId; }
+    public void setUsuarioId(Long usuarioId) { this.usuarioId = usuarioId; }
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public String getTitulo() { return titulo; }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
 
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
-    public Integer getValorEstimado() { return valorEstimado; }
-    public void setValorEstimado(int valorEstimado) { this.valorEstimado = valorEstimado; }
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
 
-    public Integer getIdCalidad() { return idCalidad; }
-    public void setIdCalidad(Integer idCalidad) { this.idCalidad = idCalidad; }
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 
-    public Long getCategoriaId() { return categoriaId; }
-    public void setCategoriaId(Long categoriaId) { this.categoriaId = categoriaId; }
+    public String getImagenUrl() { return imagenUrl; }
+    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
 
-    public Long getIdUsuarioPropietario() { return idUsuarioPropietario; }
-    public void setIdUsuarioPropietario(Long idUsuarioPropietario) {
-        this.idUsuarioPropietario = idUsuarioPropietario;
-    }
+    public Long getZonaSeguraId() { return zonaSeguraId; }
+    public void setZonaSeguraId(Long zonaSeguraId) { this.zonaSeguraId = zonaSeguraId; }
 
-    public LocalDateTime getFechaCreacion() { return fechaCreacion; }
-    public void setFechaCreacion(LocalDateTime fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
-
-    public Boolean getActivo() { return activo; }
-    public void setActivo(Boolean activo) { this.activo = activo; }
-
-    // ⚠ MANTENER COMPATIBILIDAD CON CÓDIGO EXISTENTE
-    public Long getUsuarioId() { return idUsuarioPropietario; }
-    public void setUsuarioId(Long usuarioId) { this.idUsuarioPropietario = usuarioId; }
+    public LocalDateTime getFechaPublicacion() { return fechaPublicacion; }
+    public void setFechaPublicacion(LocalDateTime fechaPublicacion) { this.fechaPublicacion = fechaPublicacion; }
 }

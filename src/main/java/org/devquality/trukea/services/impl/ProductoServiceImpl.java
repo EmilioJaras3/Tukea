@@ -39,14 +39,14 @@ public class ProductoServiceImpl implements IProductoService {
                 throw new IllegalArgumentException("El ID de la categoría es un campo requerido.");
             }
             Producto producto = new Producto();
-            producto.setNombre(request.getNombreProducto());
+            producto.setTitulo(request.getNombreProducto());
             producto.setDescripcion(request.getDescripcionProducto());
-            producto.setCategoriaId(request.getIdCategoria().longValue());
+            producto.setCategoria(request.getCategoria());
             producto.setUsuarioId(request.getIdUsuario().longValue());
-            producto.setValorEstimado(request.getValorEstimado() != null ? request.getValorEstimado() : 0);
-            producto.setIdCalidad(request.getIdCalidad());
-            producto.setFechaCreacion(LocalDateTime.now());
-            producto.setActivo(true);
+            producto.setEstado(request.getEstado());
+            producto.setImagenUrl(request.getImagenUrl());
+            producto.setZonaSeguraId(request.getZonaSeguraId());
+            producto.setFechaPublicacion(LocalDateTime.now());
 
             Producto productoCreado = this.productoRepository.createProducto(producto);
             return mapToCreateProductoResponse(productoCreado);
@@ -68,11 +68,13 @@ public class ProductoServiceImpl implements IProductoService {
             throw new IllegalArgumentException("No se encontró un producto con el ID: " + id);
         }
 
-        productoExistente.setNombre(request.getNombreProducto());
+        productoExistente.setTitulo(request.getNombreProducto());
         productoExistente.setDescripcion(request.getDescripcionProducto());
-        productoExistente.setCategoriaId(request.getIdCategoria().longValue());
-        productoExistente.setValorEstimado(request.getValorEstimado());
-        productoExistente.setIdCalidad(request.getIdCalidad());
+        productoExistente.setCategoria(request.getCategoria());
+        productoExistente.setEstado(request.getEstado());
+        productoExistente.setImagenUrl(request.getImagenUrl());
+        productoExistente.setZonaSeguraId(request.getZonaSeguraId());
+        productoExistente.setFechaPublicacion(LocalDateTime.now());
 
         Producto productoActualizado = this.productoRepository.updateProducto(productoExistente);
         return mapToCreateProductoResponse(productoActualizado);
@@ -124,10 +126,8 @@ public class ProductoServiceImpl implements IProductoService {
         if (categoriaId == null || categoriaId <= 0) {
             throw new IllegalArgumentException("El ID de la categoría es inválido.");
         }
-        ArrayList<Producto> productos = productoRepository.findByCategoriaId(categoriaId);
-        return productos.stream()
-                .map(this::mapToCreateProductoResponse)
-                .collect(Collectors.toCollection(ArrayList::new));
+        // Adaptar: ahora la categoría es String, no ID
+        throw new UnsupportedOperationException("Buscar por ID de categoría ya no es válido. Usa findByCategoria(String categoria)");
     }
 
     // --- OPERACIONES DE UTILIDAD ---
@@ -153,7 +153,8 @@ public class ProductoServiceImpl implements IProductoService {
         if (categoriaId == null || categoriaId <= 0) {
             return 0;
         }
-        return productoRepository.countByCategoriaId(categoriaId);
+        // Adaptar: ahora la categoría es String, no ID
+        throw new UnsupportedOperationException("Contar por ID de categoría ya no es válido. Usa countByCategoria(String categoria)");
     }
 
     // --- MÉTODO PRIVADO DE AYUDA (HELPER) ---
@@ -164,11 +165,11 @@ public class ProductoServiceImpl implements IProductoService {
         }
         return new CreateProductoResponse(
                 producto.getId() != null ? producto.getId().intValue() : null,
-                producto.getNombre(),
+                producto.getTitulo(),
                 producto.getDescripcion(),
-                producto.getValorEstimado(),
-                producto.getIdCalidad(),
-                producto.getCategoriaId() != null ? producto.getCategoriaId().intValue() : null
+                null, // valorEstimado eliminado
+                null, // idCalidad eliminado
+                null  // categoriaId eliminado
         );
     }
 }

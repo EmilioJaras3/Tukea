@@ -7,17 +7,16 @@ import org.slf4j.LoggerFactory;
 import org.devquality.trukea.config.DatabaseConfig;
 
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 
 /**
- * Implementación COMPLETA de IProductoRepository usando JDBC.
- * Se eliminaron las referencias a las columnas 'activo' y 'fecha_creacion'
- * para que coincida con la estructura de tu base de datos.
+ * Implementación de IProductoRepository adaptada a la tabla publicaciones.
  */
 public class ProductoRepositoryImpl implements IProductoRepository {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductoRepositoryImpl.class);
-
     private final DatabaseConfig databaseConfig;
 
     public ProductoRepositoryImpl(DatabaseConfig databaseConfig) {
@@ -31,30 +30,38 @@ public class ProductoRepositoryImpl implements IProductoRepository {
     // --- HELPER DE MAPEO ---
     private Producto mapRowToProducto(ResultSet rs) throws SQLException {
         Producto p = new Producto();
-        p.setId(rs.getLong("id_producto"));
-        p.setNombre(rs.getString("nombre_producto"));
-        p.setDescripcion(rs.getString("descripcion_producto"));
-        p.setValorEstimado(rs.getInt("valor_estimado"));
-        p.setIdCalidad((Integer) rs.getObject("id_calidad"));
-        p.setCategoriaId(rs.getLong("id_categoria"));
-        p.setUsuarioId(rs.getLong("id_usuario_propietario"));
+        p.setId(rs.getLong("id"));
+        p.setUsuarioId(rs.getLong("usuario_id"));
+        p.setTitulo(rs.getString("titulo"));
+        p.setDescripcion(rs.getString("descripcion"));
+        p.setCategoria(rs.getString("categoria"));
+        p.setEstado(rs.getString("estado"));
+        p.setImagenUrl(rs.getString("imagen_url"));
+        p.setZonaSeguraId(rs.getObject("zona_segura_id") != null ? rs.getLong("zona_segura_id") : null);
+        Timestamp ts = rs.getTimestamp("fecha_publicacion");
+        if (ts != null) {
+            p.setFechaPublicacion(ts.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+        }
         return p;
     }
 
     // --- CREATE ---
     @Override
     public Producto createProducto(Producto producto) {
-        String sql = "INSERT INTO productos (nombre_producto, descripcion_producto, valor_estimado, id_calidad, id_categoria, id_usuario_propietario) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO publicaciones (usuario_id, titulo, descripcion, categoria, estado, imagen_url, zona_segura_id, fecha_publicacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            stmt.setString(1, producto.getNombre());
-            stmt.setString(2, producto.getDescripcion());
-            stmt.setObject(3, producto.getValorEstimado());
-            stmt.setObject(4, producto.getIdCalidad());
-            stmt.setLong(5, producto.getCategoriaId());
-            if (producto.getUsuarioId() != null) { stmt.setLong(6, producto.getUsuarioId()); }
-            else { throw new SQLException("El ID del usuario no puede ser nulo."); }
+            stmt.setLong(1, producto.getUsuarioId());
+            stmt.setString(2, producto.getTitulo());
+            stmt.setString(3, producto.getDescripcion());
+            stmt.setString(4, producto.getCategoria());
+            stmt.setString(5, producto.getEstado());
+            stmt.setString(6, producto.getImagenUrl());
+            if (producto.getZonaSeguraId() != null) stmt.setLong(7, producto.getZonaSeguraId());
+            else stmt.setNull(7, Types.BIGINT);
+            if (producto.getFechaPublicacion() != null) stmt.setTimestamp(8, Timestamp.valueOf(producto.getFechaPublicacion()));
+            else stmt.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
 
             stmt.executeUpdate();
             try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
@@ -62,8 +69,8 @@ public class ProductoRepositoryImpl implements IProductoRepository {
             }
             return producto;
         } catch (SQLException e) {
-            logger.error("Error SQL al crear producto", e);
-            throw new RuntimeException("Error en BD al crear producto", e);
+            logger.error("Error SQL al crear publicación", e);
+            throw new RuntimeException("Error en BD al crear publicación", e);
         }
     }
 
@@ -71,7 +78,7 @@ public class ProductoRepositoryImpl implements IProductoRepository {
     @Override
     public ArrayList<Producto> findAllProductos() {
         ArrayList<Producto> productos = new ArrayList<>();
-        String sql = "SELECT * FROM productos";
+        String sql = "SELECT * FROM publicaciones";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
@@ -82,7 +89,7 @@ public class ProductoRepositoryImpl implements IProductoRepository {
 
     @Override
     public Producto findById(Long id) {
-        String sql = "SELECT * FROM productos WHERE id_producto = ?";
+        String sql = "SELECT * FROM publicaciones WHERE id = ?";
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, id);
             try (ResultSet rs = stmt.executeQuery()) { if (rs.next()) return mapRowToProducto(rs); }
@@ -93,7 +100,7 @@ public class ProductoRepositoryImpl implements IProductoRepository {
     @Override
     public ArrayList<Producto> findByUsuarioId(Long usuarioId) {
         ArrayList<Producto> productos = new ArrayList<>();
-        String sql = "SELECT * FROM productos WHERE id_usuario_propietario = ?";
+        String sql = "SELECT * FROM publicaciones WHERE usuario_id = ?";
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, usuarioId);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -104,42 +111,46 @@ public class ProductoRepositoryImpl implements IProductoRepository {
     }
 
     @Override
-    public ArrayList<Producto> findByCategoriaId(Long categoriaId) {
+    public ArrayList<Producto> findByCategoria(String categoria) {
         ArrayList<Producto> productos = new ArrayList<>();
-        String sql = "SELECT * FROM productos WHERE id_categoria = ?";
+        String sql = "SELECT * FROM publicaciones WHERE categoria = ?";
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, categoriaId);
+            stmt.setString(1, categoria);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) { productos.add(mapRowToProducto(rs)); }
             }
-        } catch (SQLException e) { logger.error("Error SQL en findByCategoriaId", e); }
+        } catch (SQLException e) { logger.error("Error SQL en findByCategoria", e); }
         return productos;
     }
 
     // --- UPDATE ---
     @Override
     public Producto updateProducto(Producto producto) {
-        String sql = "UPDATE productos SET nombre_producto = ?, descripcion_producto = ?, valor_estimado = ?, id_calidad = ?, id_categoria = ? WHERE id_producto = ?";
+        String sql = "UPDATE publicaciones SET usuario_id = ?, titulo = ?, descripcion = ?, categoria = ?, estado = ?, imagen_url = ?, zona_segura_id = ?, fecha_publicacion = ? WHERE id = ?";
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, producto.getNombre());
-            stmt.setString(2, producto.getDescripcion());
-            stmt.setObject(3, producto.getValorEstimado());
-            stmt.setObject(4, producto.getIdCalidad());
-            stmt.setLong(5, producto.getCategoriaId());
-            stmt.setLong(6, producto.getId());
+            stmt.setLong(1, producto.getUsuarioId());
+            stmt.setString(2, producto.getTitulo());
+            stmt.setString(3, producto.getDescripcion());
+            stmt.setString(4, producto.getCategoria());
+            stmt.setString(5, producto.getEstado());
+            stmt.setString(6, producto.getImagenUrl());
+            if (producto.getZonaSeguraId() != null) stmt.setLong(7, producto.getZonaSeguraId());
+            else stmt.setNull(7, Types.BIGINT);
+            if (producto.getFechaPublicacion() != null) stmt.setTimestamp(8, Timestamp.valueOf(producto.getFechaPublicacion()));
+            else stmt.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
+            stmt.setLong(9, producto.getId());
             stmt.executeUpdate();
             return producto;
         } catch (SQLException e) {
             logger.error("Error SQL en updateProducto", e);
-            throw new RuntimeException("Error en BD al actualizar", e);
+            throw new RuntimeException("Error en BD al actualizar publicación", e);
         }
     }
 
     // --- DELETE ---
     @Override
     public boolean deleteProducto(Long id) {
-        // En este caso haremos un borrado real (hard delete)
-        String sql = "DELETE FROM productos WHERE id_producto = ?";
+        String sql = "DELETE FROM publicaciones WHERE id = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, id);
@@ -153,7 +164,7 @@ public class ProductoRepositoryImpl implements IProductoRepository {
     // --- UTILITY ---
     @Override
     public boolean existsById(Long id) {
-        String sql = "SELECT 1 FROM productos WHERE id_producto = ?";
+        String sql = "SELECT 1 FROM publicaciones WHERE id = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, id);
@@ -164,7 +175,7 @@ public class ProductoRepositoryImpl implements IProductoRepository {
 
     @Override
     public int countByUsuarioId(Long usuarioId) {
-        String sql = "SELECT COUNT(*) FROM productos WHERE id_usuario_propietario = ?";
+        String sql = "SELECT COUNT(*) FROM publicaciones WHERE usuario_id = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, usuarioId);
@@ -174,13 +185,13 @@ public class ProductoRepositoryImpl implements IProductoRepository {
     }
 
     @Override
-    public int countByCategoriaId(Long categoriaId) {
-        String sql = "SELECT COUNT(*) FROM productos WHERE id_categoria = ?";
+    public int countByCategoria(String categoria) {
+        String sql = "SELECT COUNT(*) FROM publicaciones WHERE categoria = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, categoriaId);
+            stmt.setString(1, categoria);
             try (ResultSet rs = stmt.executeQuery()) { if (rs.next()) return rs.getInt(1); }
-        } catch (SQLException e) { logger.error("Error SQL en countByCategoriaId", e); }
+        } catch (SQLException e) { logger.error("Error SQL en countByCategoria", e); }
         return 0;
     }
 }
